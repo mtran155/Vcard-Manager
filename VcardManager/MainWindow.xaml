@@ -1,0 +1,89 @@
+﻿<Window x:Class="VcardManager.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:VcardManager"
+        mc:Ignorable="d"
+        Title="Vcard Editor" Height="600" Width="1000"
+        ResizeMode="NoResize">
+    <Window.Resources>
+        <local:NameToBrushConverter x:Key="NameToBrushConverter"/>
+        <BitmapImage x:Key="DefaultImage" UriSource="/Images/BlankProfile.png"/>
+    </Window.Resources>
+
+    <DockPanel>
+        <Menu DockPanel.Dock="Top">
+            <MenuItem Header="_File">
+                <MenuItem Header="_Open" Click="OpenFile_Click"/>
+                <MenuItem Header="_Save"/>
+                <MenuItem Header="_Close" Click="CloseFile_Click"/>
+            </MenuItem>
+            <MenuItem Header="Help">
+                <MenuItem Header="About" Click="About_Click"/>
+                <MenuItem Header="Flag Meaning" Click="Flag_Click"/>
+            </MenuItem>
+        </Menu>
+        <StackPanel>
+
+            <DataGrid Name="dgUsers" AutoGenerateColumns="False" Height="332" IsReadOnly="True" CanUserResizeColumns="False">
+                <DataGrid.Columns>
+                    <DataGridTextColumn Header="Card #" Binding="{Binding cardNumber}" Width="80"/>
+                    <DataGridTextColumn Header="Name" Binding="{Binding Name}" Width="150"/>
+                    <DataGridTextColumn Header="Region" Binding="{Binding Region}" Width="200"/>
+                    <DataGridTextColumn Header="Country" Binding="{Binding Country}" Width="200"/>
+                    <DataGridTextColumn Header="# Address" Binding="{Binding numAddress}" Width="80"/>
+                    <DataGridTextColumn Header="# Telephone" Binding="{Binding numTelephone}" Width="85"/>
+                    <DataGridTextColumn Header="Flags" Binding="{Binding UID}" Width="181">
+                        <DataGridTextColumn.ElementStyle>
+                            <Style TargetType="{x:Type TextBlock}">
+                                <Setter Property="Background" Value="{Binding UID, Converter={StaticResource NameToBrushConverter}}"/>
+                            </Style>
+                        </DataGridTextColumn.ElementStyle>
+                    </DataGridTextColumn>
+
+                </DataGrid.Columns>
+
+                <DataGrid.RowDetailsTemplate>
+                    <DataTemplate>
+                        <DockPanel Background="White">
+                            
+                            <Image DockPanel.Dock="Left" Source="{Binding Image, TargetNullValue={StaticResource DefaultImage}}" Height="100" Width="100"/>
+                            <Grid Margin="0,10">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="Auto"/>
+                                    <ColumnDefinition Width="*"/>
+                                </Grid.ColumnDefinitions>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="Auto"/>
+                                    <RowDefinition Height="Auto"/>
+                                    <RowDefinition Height="Auto"/>
+                                    <RowDefinition Height="Auto"/>
+                                    <RowDefinition Height="Auto"/>
+                                    <RowDefinition Height="Auto"/>
+                                </Grid.RowDefinitions>
+
+                                <TextBlock Text="Name: " FontWeight="Bold" Grid.Row="1"/>
+                                <TextBlock Text="{Binding Name}" Grid.Column="1" Grid.Row="1" />
+                                <TextBlock Text="Telephone: " FontWeight="Bold" Grid.Row="2"/>
+                                <TextBlock Text="{Binding Telephone}" Grid.Column="1" Grid.Row="2" />
+                                <TextBlock Text="Address: " FontWeight="Bold" Grid.Row="3"/>
+                                <TextBlock Text="{Binding Address}" Grid.Column="1" Grid.Row="3" />
+                                <TextBlock Text="Email: " FontWeight="Bold" Grid.Row="4"/>
+                                <TextBlock Text="{Binding Email}" Grid.Column="1" Grid.Row="4" />
+
+                            </Grid>
+                        </DockPanel>
+                    </DataTemplate>
+                </DataGrid.RowDetailsTemplate>
+
+            </DataGrid>
+            <Label Content="Log." Width="31" />
+            <TextBox AcceptsReturn="True" TextWrapping="Wrap" Width="738" Height="261" Name="LogBox"/>
+
+        </StackPanel>
+
+
+    </DockPanel>
+
+</Window>
