@@ -16,7 +16,7 @@
         <Menu DockPanel.Dock="Top">
             <MenuItem Header="_File">
                 <MenuItem Header="_Open" Click="OpenFile_Click"/>
-                <MenuItem Header="_Save"/>
+                <!--<MenuItem Header="_Save"/>-->
                 <MenuItem Header="_Close" Click="CloseFile_Click"/>
             </MenuItem>
             <MenuItem Header="Help">
@@ -26,22 +26,14 @@
         </Menu>
         <StackPanel>
 
-            <DataGrid Name="dgUsers" AutoGenerateColumns="False" Height="332" IsReadOnly="True" CanUserResizeColumns="False">
+            <DataGrid Name="dgUsers" AutoGenerateColumns="False" Height="332" IsReadOnly="True" CanUserResizeColumns="False" SelectedItem="{Binding Path=SelectedCard, Mode=TwoWay}">
                 <DataGrid.Columns>
-                    <DataGridTextColumn Header="Card #" Binding="{Binding cardNumber}" Width="80"/>
-                    <DataGridTextColumn Header="Name" Binding="{Binding Name}" Width="150"/>
-                    <DataGridTextColumn Header="Region" Binding="{Binding Region}" Width="200"/>
-                    <DataGridTextColumn Header="Country" Binding="{Binding Country}" Width="200"/>
-                    <DataGridTextColumn Header="# Address" Binding="{Binding numAddress}" Width="80"/>
-                    <DataGridTextColumn Header="# Telephone" Binding="{Binding numTelephone}" Width="85"/>
-                    <DataGridTextColumn Header="Flags" Binding="{Binding UID}" Width="181">
-                        <DataGridTextColumn.ElementStyle>
-                            <Style TargetType="{x:Type TextBlock}">
-                                <Setter Property="Background" Value="{Binding UID, Converter={StaticResource NameToBrushConverter}}"/>
-                            </Style>
-                        </DataGridTextColumn.ElementStyle>
-                    </DataGridTextColumn>
-
+                    <DataGridTextColumn Header="Card #" Binding="{Binding cardNumber}" Width="100"/>
+                    <DataGridTextColumn Header="Name" Binding="{Binding Name}" Width="200"/>
+                    <DataGridTextColumn Header="Region" Binding="{Binding Region, TargetNullValue=Not Available}" Width="240"/>
+                    <DataGridTextColumn Header="Country" Binding="{Binding Country, TargetNullValue=Not Available}" Width="240"/>
+                    <DataGridTextColumn Header="# Address" Binding="{Binding numAddress}" Width="100"/>
+                    <DataGridTextColumn Header="# Telephone" Binding="{Binding numTelephone}" Width="95"/>
                 </DataGrid.Columns>
 
                 <DataGrid.RowDetailsTemplate>
@@ -49,7 +41,7 @@
                         <DockPanel Background="White">
                             
                             <Image DockPanel.Dock="Left" Source="{Binding Image, TargetNullValue={StaticResource DefaultImage}}" Height="100" Width="100"/>
-                            <Grid Margin="0,10">
+                            <Grid Margin="0,10" >
                                 <Grid.ColumnDefinitions>
                                     <ColumnDefinition Width="Auto"/>
                                     <ColumnDefinition Width="*"/>
@@ -71,15 +63,16 @@
                                 <TextBlock Text="{Binding Address}" Grid.Column="1" Grid.Row="3" />
                                 <TextBlock Text="Email: " FontWeight="Bold" Grid.Row="4"/>
                                 <TextBlock Text="{Binding Email}" Grid.Column="1" Grid.Row="4" />
-
+                                <Button Content="View Card" FontWeight="Bold" Height="30" Width="70" Grid.Column="1" Grid.Row="2" Click="viewCard_Click"/>
                             </Grid>
+                            
                         </DockPanel>
                     </DataTemplate>
                 </DataGrid.RowDetailsTemplate>
 
             </DataGrid>
             <Label Content="Log." Width="31" />
-            <TextBox AcceptsReturn="True" TextWrapping="Wrap" Width="738" Height="261" Name="LogBox"/>
+            <TextBox AcceptsReturn="True" TextWrapping="Wrap" Width="738" Height="131" Name="LogBox"/>
 
         </StackPanel>
 

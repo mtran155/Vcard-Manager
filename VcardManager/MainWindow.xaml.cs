@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Net;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
@@ -26,7 +27,7 @@ namespace VcardManager
         VcUtil.VcStatus status = new VcUtil.VcStatus();
         VcUtil util = new VcUtil();
         VcUtil.VcFile filep = new VcUtil.VcFile();
-        List<CardDetails> cards = new List<CardDetails>();
+        List<CardDetails> cardList = new List<CardDetails>();
 
         public MainWindow()
         {
@@ -60,166 +61,6 @@ namespace VcardManager
             }
         }
 
-        public void RefreshCardDisplay()
-        {
-            int adrCount = 0;
-            int telCount = 0;
-            int nameCount = 0;
-            int geoCount = 0;
-            int photoCount = 0;
-            int urlCount = 0;
-            bool adrFlag = false;
-            bool telFlag = false;
-            bool emailFlag = false;
-            string name = null;
-            string region = null;
-            string country = null;
-            string[] tokens = null;
-            string image = null;
-            StringBuilder uidString = new StringBuilder();
-            StringBuilder address = new StringBuilder();
-            StringBuilder telephone = new StringBuilder();
-            StringBuilder email = new StringBuilder();
-
-            for (int i = 0; i < filep.getNcards(); i++)
-            {
-                adrCount = telCount = nameCount = geoCount = photoCount = urlCount = 0;
-                adrFlag = telFlag = emailFlag = false;
-                name = region = country = image = null;
-                uidString.Clear();
-                uidString.Append("?----");
-                address.Clear();
-                telephone.Clear();
-                email.Clear();
-
-                for (int j = 0; j < filep.getCardp(i).getNprops(); j++)
-                {
-                    if (filep.getCardp(i).getProp(j).getName() == VcUtil.VcPname.VCP_FN)
-                    {
-                        name = filep.getCardp(i).getProp(j).getValue();
-                        nameCount++;
-                    }
-                    else if (filep.getCardp(i).getProp(j).getName() == VcUtil.VcPname.VCP_N)
-                    {
-                        nameCount++;
-                    }
-                    else if (filep.getCardp(i).getProp(j).getName() == VcUtil.VcPname.VCP_ADR)
-                    {
-                        if (adrFlag)
-                        {
-                            address.Append("\n");
-                        }
-
-                        adrCount++;
-                        tokens = filep.getCardp(i).getProp(j).getValue().Split(';');
-                        for (int k = 2; k < tokens.Length; k++)
-                        {
-                            if (tokens[k].Length > 1)
-                            {
-                                address.Append(tokens[k].Trim()).Append(" ");
-                            }
-                        }
-
-                        if (!adrFlag)
-                        {
-                            region = tokens[4];
-                            country = tokens[6];
-                            adrFlag = true;
-                        }
-                    }
-                    else if (filep.getCardp(i).getProp(j).getName() == VcUtil.VcPname.VCP_TEL)
-                    {
-                        if (telFlag)
-                        {
-                            telephone.Append("\n");
-                        }
-
-                        telephone.Append(filep.getCardp(i).getProp(j).getValue());
-                        telCount++;
-                        telFlag = true;
-                    }
-                    else if (filep.getCardp(i).getProp(j).getName() == VcUtil.VcPname.VCP_EMAIL)
-                    {
-                        if (emailFlag)
-                        {
-                            email.Append("\n");
-                        }
-
-                        email.Append(filep.getCardp(i).getProp(j).getValue());
-                        emailFlag = true;
-                    }
-                    else if (filep.getCardp(i).getProp(j).getName() == VcUtil.VcPname.VCP_GEO)
-                    {
-                        geoCount++;
-                    }
-                    else if (filep.getCardp(i).getProp(j).getName() == VcUtil.VcPname.VCP_PHOTO)
-                    {
-                        image = filep.getCardp(i).getProp(j).getValue();
-                        photoCount++;
-                    }
-                    else if (filep.getCardp(i).getProp(j).getName() == VcUtil.VcPname.VCP_URL)
-                    {
-                        urlCount++;
-                    }
-                    else if (filep.getCardp(i).getProp(j).getName() == VcUtil.VcPname.VCP_UID)
-                    {
-                        uidString.Append(filep.getCardp(i).getProp(j).getValue());
-                        foreach (char c in filep.getCardp(i).getProp(j).getValue())
-                        {
-                            if (c == '*')
-                            {
-                                uidString[0] = '-';
-                                break;
-                            }
-                            else
-                            {
-                                uidString[0] = 'C';
-                            }
-                        }
-                    }
-                }
-
-                if (nameCount > 1)
-                {
-                    uidString[1] = 'M';
-                }
-                if (urlCount > 0)
-                {
-                    uidString[2] = 'U';
-                }
-                if (photoCount > 0)
-                {
-                    uidString[3] = 'P';
-                }
-                if (geoCount > 0)
-                {
-                    uidString[4] = 'G';
-                }
-
-                if (email.Length == 0)
-                {
-                    email.Append("Not Available");
-                }
-
-                cards.Add(new CardDetails()
-                {
-                    cardNumber = (i + 1),
-                    Name = name,
-                    Region = region,
-                    Country = country,
-                    Address = address.ToString().TrimEnd(),
-                    numAddress = adrCount,
-                    Telephone = telephone.ToString(),
-                    numTelephone = telCount,
-                    Email = email.ToString(),
-                    UID = uidString.ToString(),
-                    Image = image
-                });
-            }
-
-            dgUsers.ItemsSource = cards;
-        }
-
         private void CloseFile_Click(object sender, RoutedEventArgs e)
         {
             MessageBoxResult result = MessageBox.Show("Are you sure you want to close this applicaiton?", "Confirmation", MessageBoxButton.YesNo, MessageBoxImage.Warning);
@@ -248,6 +89,285 @@ namespace VcardManager
                                    "Yellow  = default state if neither green nor red applies.\n";
 
             MessageBox.Show(flagMeanging + "\n" + colourMeaning, "About Flags and Colour", MessageBoxButton.OK, MessageBoxImage.Information);
+        }
+
+        private void viewCard_Click(object sender, RoutedEventArgs e)
+        {
+            Window1 secondWindow = new Window1();
+            CardDetails card = (CardDetails)dgUsers.SelectedItem;
+            secondWindow.Title = card.Name;
+            fillViewCardPanel(secondWindow, card);
+            secondWindow.Show();                      
+        }
+
+        private void fillViewCardPanel(Window1 window, CardDetails card)
+        {
+            string[] tokens = null;
+
+            if (card.Image != null)
+            {
+                var image = new BitmapImage();
+                int BytesToRead = 100;
+
+                WebRequest request = WebRequest.Create(new Uri(card.Image, UriKind.Absolute));
+                request.Timeout = -1;
+                WebResponse response = request.GetResponse();
+                Stream responseStream = response.GetResponseStream();
+                BinaryReader reader = new BinaryReader(responseStream);
+                MemoryStream memoryStream = new MemoryStream();
+
+                byte[] bytebuffer = new byte[BytesToRead];
+                int bytesRead = reader.Read(bytebuffer, 0, BytesToRead);
+
+                while (bytesRead > 0)
+                {
+                    memoryStream.Write(bytebuffer, 0, bytesRead);
+                    bytesRead = reader.Read(bytebuffer, 0, BytesToRead);
+                }
+
+                image.BeginInit();
+                memoryStream.Seek(0, SeekOrigin.Begin);
+
+                image.StreamSource = memoryStream;
+                image.EndInit();
+
+                window.ImageProfile.Source = image;
+            }
+            else
+            {
+                Uri uri = new Uri("/Images/BlankProfile.png", UriKind.Relative);
+                ImageSource imgSource = new BitmapImage(uri);
+                window.ImageProfile.Source = imgSource;
+            }
+
+            /*Summary Tab*/
+            window.TextName.Text = card.Name;
+            window.TextEmail.Text = card.mainEmail;
+            window.TextCompany.Text = card.Company;
+            window.TextJobTitle.Text = card.Title;
+            window.TextWorkPhone.Text = card.workPhone;
+            window.TextWorkWebsite.Text = card.workWebsite;
+            window.TextHomePhone.Text = card.homePhone;
+            window.TextCellPhone.Text = card.cellPhone;
+            window.TextPersonalWebsite.Text = card.Website;
+            /*************************************/
+
+            /*Name and Email Tab*/
+            for (int i = 0; i < card.fullName.Length; i++)
+            {
+                switch (i)
+                {
+                    case 0:
+                        window.LastName.Text = card.fullName[i];
+                        break;
+                    case 1:
+                        window.FirstName.Text = card.fullName[i];
+                        break;
+                    case 2:
+                        window.MiddleName.Text = card.fullName[i];
+                        break;
+                    default:
+                        break;
+                }
+            }
+            tokens = card.Email.Split('\n');
+            window.EmailList.Items.Add(card.mainEmail + "  (Preferred e-mail)");
+            for (int i = 0; i < tokens.Length; i++)
+            {
+                if (!tokens[i].Contains(card.mainEmail))
+                {
+                    window.EmailList.Items.Add(tokens[i]);
+                }
+            }
+            /*************************************/
+
+            /*Home Tab*/
+            /*************************************/
+
+            /*Work Tab*/
+            /*************************************/
+
+            window.NotesTextBox.Text = card.Note;
+            
+        }
+
+        public void RefreshCardDisplay()
+        {
+            for (int i = 0; i < filep.getNcards(); i++)
+            {
+                CardDetails card = new CardDetails();
+                card.cardNumber = i + 1;
+
+                for (int j = 0; j < filep.getCardp(i).getNprops(); j++)
+                {
+                    PropertyValue(filep.getCardp(i).getProp(j).getName(), filep.getCardp(i).getProp(j), card);
+                }
+                
+                cardList.Add(card);
+            }
+
+            dgUsers.ItemsSource = cardList;
+        }
+
+        private void PropertyValue(VcUtil.VcPname name, VcUtil.VcProp prop, CardDetails card)
+        {
+            string[] tokens = null;
+
+            switch (name)
+            {
+                case VcUtil.VcPname.VCP_N:                    
+                    tokens = prop.getValue().Split(';');
+                    card.fullName = tokens;
+                    break;
+
+                case VcUtil.VcPname.VCP_FN:
+                    card.Name = prop.getValue();
+                    break;
+
+                case VcUtil.VcPname.VCP_NICKNAME:
+                    break;
+
+                case VcUtil.VcPname.VCP_PHOTO:
+                    card.Image = prop.getValue();
+                    break;
+
+                case VcUtil.VcPname.VCP_BDAY:
+                    break;
+
+                case VcUtil.VcPname.VCP_ADR:
+                    card.numAddress += 1;
+
+                    if (card.Address == null)
+                    {
+                        card.Address = addressValue(prop.getValue());
+
+                        tokens = prop.getValue().Split(';');
+
+                        if (tokens[4].Length > 0)
+                        {
+                            card.Region = tokens[4];
+                        }
+
+                        if (tokens[6].Length > 0)
+                        {
+                            card.Country = tokens[6];
+                        }
+                    }
+                    else
+                    {
+                        card.Address += "\n" + addressValue(prop.getValue());
+                    }
+
+                    if (prop.getPartype().ToUpper().Contains("HOME"))
+                    {
+                        card.homeAddress = prop.getValue().Split(';');
+                    }
+
+                    if (prop.getPartype().ToUpper().Contains("WORK"))
+                    {
+                        card.workAddress = prop.getValue().Split(';');
+                    }
+                    break;
+
+                case VcUtil.VcPname.VCP_LABEL:
+                    break;
+
+                case VcUtil.VcPname.VCP_TEL:
+                    card.numTelephone += 1;
+                    if (card.Telephone == null)
+                    {
+                        card.Telephone = prop.getValue();
+                    }
+                    else
+                    {
+                        card.Telephone += "\n" + prop.getValue();
+                    }
+
+                    if (prop.getPartype().ToUpper().Contains("HOME"))
+                    {
+                        card.homePhone = prop.getValue();
+                    }
+
+                    if (prop.getPartype().ToUpper().Contains("WORK"))
+                    {
+                        card.workPhone = prop.getValue();
+                    }
+
+                    if (prop.getPartype().ToUpper().Contains("CELL"))
+                    {
+                        card.cellPhone = prop.getValue();
+                    }
+
+                    break;
+
+                case VcUtil.VcPname.VCP_EMAIL:
+                    if (card.Email == null)
+                    {
+                        card.Email = prop.getValue();
+                    }
+                    else
+                    {
+                        card.Email += "\n" + prop.getValue();
+                    }
+
+                    if (prop.getPartype().ToUpper().Contains("PREF"))
+                    {
+                        card.mainEmail = prop.getValue();
+                    }
+
+                    break;
+
+                case VcUtil.VcPname.VCP_GEO:
+                    break;
+
+                case VcUtil.VcPname.VCP_TITLE:
+                    card.Title = prop.getValue();
+                    break;
+
+                case VcUtil.VcPname.VCP_ORG:
+                    card.Company = prop.getValue();
+                    break;
+
+                case VcUtil.VcPname.VCP_NOTE:
+                    card.Note = prop.getValue();
+                    break;
+
+                case VcUtil.VcPname.VCP_URL:
+                    if (prop.getPartype().ToUpper().Contains("HOME"))
+                    {
+                        card.Website = prop.getValue();
+                    }
+
+                    if (prop.getPartype().ToUpper().Contains("WORK"))
+                    {
+                        card.workWebsite = prop.getValue();
+                    }
+                    break;
+
+                case VcUtil.VcPname.VCP_OTHER:
+                    break;
+
+                default:
+                    break;
+            }
+        }
+
+        private string addressValue(string value)
+        {
+            string[] tokens = null;
+            StringBuilder address = new StringBuilder(); 
+
+            tokens = value.Split(';');
+
+            for (int i = 2; i < tokens.Length; i++)
+            {
+                if (tokens[i].Length > 1)
+                {
+                    address.Append(tokens[i].Trim()).Append(" ");
+                }
+            }
+
+            return address.ToString();
         }
     }
 }
