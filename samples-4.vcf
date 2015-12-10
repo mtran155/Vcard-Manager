@@ -1,0 +1,55 @@
+BEGIN:VCARD
+VERSION:3.0
+N;CHARSET=UTF-8:Wheatburn;Martin
+FN;CHARSET=UTF-8:Martin Wheatburn
+ORG;CHARSET=UTF-8:Syngenta Crop Protection Canada\, Inc.;
+ADR;TYPE=WORK,POSTAL;CHARSET=UTF-8:;;biz park?;Guelph;Ontario;;Canada
+TEL;TYPE=WORK,VOICE:519-837-5532 Ext. 123
+sadlkjasdlkjasd.EMAIL;TYPE=PREF,INTERNET:Wheatburn@sympatico.ca
+PHOTO:http://www.wpf-tutorial.com/images/misc/john_doe.jpg
+TITLE;CHARSET=UTF-8:Programmer and Data Analyst
+NOTE;CHARSET=UTF-8:working nea
+ rby as of Aug/07
+END:VCARD
+
+BEGIN:VCARD
+VERSION:3.0
+N;CHARSET=xUTF-8:Celery;David;Joe;
+FN;CHARSET=UTF-8:David Celery
+ORG;CHARSET=UTF-8:Systems Engineering & Consulting\, Inc.; 
+ADR;TYPE=WORK,POSTAL;CHARSET=UTF-8:;;89 Potomac Ridge Court;Sterling;VA;20164-1370;
+ADR;TYPE=HOME,POSTAL;CHARSET=UTF-8:;;(same as work);Sterling;VA;;
+TEL;TYPE=WORK,VOICE:703-404-2456
+TEL;TYPE=CELL,VOICE:703-627-0665
+EMAIL;TYPE=PREF,INTERNET:David@Celery.net
+NOTE;CHARSET=UTF-8:live near DC\nwife Betsy\n\ncame to ANC service Jan/12/09
+GEO:13.1,123.23
+END:VCARD
+
+BEGIN:VCARD
+VERSION:3.0
+N;CHARSET=UTF-8:Blizzak;Chip
+FN;CHARSET=UTF-8:Chip Blizzak
+ADR;TYPE=WORK,POSTAL;CHARSET=UTF-8:;Christopher "Chip" Blizzak;16 Koen Chou ;Kitami;Hokkaido;090-8507;Japan
+ADR;TYPE=HOME,POSTAL;CHARSET=UTF-8:;Tou Ryou Chou 113-2-11;Gou Tou 23 ;Kitami;Hokkaido;090-0061;Japan
+TEL;TYPE=WORK,VOICE:+81 (0) 157-26-8667
+TEL;TYPE=HOME,VOICE:+81 (0) 157-26-5336
+TEL;TYPE=CELL,VOICE:+81 (0) 90-1385-8482
+EMAIL;TYPE=PREF,INTERNET:Blizzakch@mail.kitami-it.ac.jp
+EMAIL;TYPE=INTERNET:asobibakari-in.gaiken@d.vodafone.ne.jp
+URL;TYPE=HOME:http://x.iwa.hokkyodai.ac.jp/~blizzak/
+NOTE;CHARSET=UTF-8:wife Satomi\n\nson Cole Jared\, b. May/6/06\ndaughter Elena Eugenie\, b. Dec/28/08 [???]\n\nvisited June 2008
+END:VCARD
+
+BEGIN:VCARD
+VERSION:3.0
+N;CHARSET=UTF-8:Macintosh;Alistair
+FN;CHARSET=UTF-8:Alistair Macintosh
+ORG;CHARSET=UTF-8:Univ. of Leicester;Control and Instrumentation Research Group
+ADR;TYPE=WORK,POSTAL;CHARSET=UTF-8:;;Dept. of Engineering;Leicester;;LE1 7RH;UK
+TEL;TYPE=WORK,VOICE:+44 (0) 116 152-2102
+TEL;TYPE=FAX:+44 (0) 116 152-2449
+EMAIL;TYPE=PREF,INTERNET:amy@leicester.ac.uk
+TITLE;CHARSET=UTF-8:Lecturer
+NOTE;CHARSET=UTF-8:prob'ly not teaching till Sep'08
+END:VCARD
