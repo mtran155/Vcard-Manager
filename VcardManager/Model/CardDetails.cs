@@ -40,7 +40,7 @@ namespace VcardManager.Model
 
         public string mainEmail { get; set; }
 
-        public string Company { get; set; }
+        public string[] Company { get; set; }
 
         public string Title { get; set; }
 

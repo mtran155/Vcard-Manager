@@ -64,17 +64,19 @@
                     <Label  Content="Postal Code:" Margin="34,171,440,0" VerticalAlignment="Top" FontWeight="Bold"/>
                     <Label  Content="Country/Region:" Margin="10,208,440,0" VerticalAlignment="Top" FontWeight="Bold"/>
                     <Label  Content="Website:" HorizontalAlignment="Left" Margin="55,328,0,0" VerticalAlignment="Top" FontWeight="Bold"/>
-                    <Button x:Name="button" Content="Go" HorizontalAlignment="Left" Margin="504,332,0,0" VerticalAlignment="Top" Width="40"/>
+                    
+                    <Button x:Name="button" Content="Go" HorizontalAlignment="Left" Margin="504,332,0,0" VerticalAlignment="Top" Width="40" IsEnabled="{Binding ElementName=HomeWebsite, Path=Text.Length, Mode=OneWay}" Click="button_Click"/>
+                    
                     <Label  Content="Phone:" HorizontalAlignment="Left" Margin="322,31,0,0" VerticalAlignment="Top" FontWeight="Bold"/>
                     <Label  Content="Cell:" HorizontalAlignment="Left" Margin="337,69,0,0" VerticalAlignment="Top" FontWeight="Bold"/>
-                    <TextBox x:Name="HomeStreet" HorizontalAlignment="Left" Height="49" Margin="119,39,0,0" TextWrapping="Wrap" Text="TextBox" VerticalAlignment="Top" Width="173"/>
-                    <TextBox x:Name="HomeCity" HorizontalAlignment="Left" Height="23" Margin="119,100,0,0" TextWrapping="Wrap" Text="TextBox" VerticalAlignment="Top" Width="173"/>
-                    <TextBox x:Name="HomeProvince" HorizontalAlignment="Left" Margin="119,137,0,213" TextWrapping="Wrap" Text="TextBox" Width="173"/>
-                    <TextBox x:Name="HomePostal" HorizontalAlignment="Left" Height="23" Margin="119,174,0,0" TextWrapping="Wrap" Text="TextBox" VerticalAlignment="Top" Width="173"/>
-                    <TextBox x:Name="HomeCountry" HorizontalAlignment="Left" Height="23" Margin="119,211,0,0" TextWrapping="Wrap" Text="TextBox" VerticalAlignment="Top" Width="173"/>
-                    <TextBox x:Name="HomePhone" HorizontalAlignment="Left" Height="23" Margin="371,34,0,0" TextWrapping="Wrap" Text="TextBox" VerticalAlignment="Top" Width="173"/>
-                    <TextBox x:Name="HomeCell" HorizontalAlignment="Left" Height="23" Margin="371,72,0,0" TextWrapping="Wrap" Text="TextBox" VerticalAlignment="Top" Width="173"/>
-                    <TextBox x:Name="HomeWebsite" HorizontalAlignment="Left" Height="23" Margin="119,332,0,0" TextWrapping="Wrap" Text="TextBox" VerticalAlignment="Top" Width="369"/>
+                    <TextBox x:Name="HomeStreet" ScrollViewer.HorizontalScrollBarVisibility="Disabled" ScrollViewer.VerticalScrollBarVisibility="Visible" IsReadOnly="True" HorizontalAlignment="Left" Height="49" Margin="119,39,0,0" TextWrapping="Wrap"  VerticalAlignment="Top" Width="155"/>
+                    <TextBox x:Name="HomeCity" IsReadOnly="True" HorizontalAlignment="Left" Height="23" Margin="119,100,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="155"/>
+                    <TextBox x:Name="HomeProvince" IsReadOnly="True" HorizontalAlignment="Left" Margin="119,137,0,213" TextWrapping="Wrap" Width="155"/>
+                    <TextBox x:Name="HomePostal" IsReadOnly="True" HorizontalAlignment="Left" Height="23" Margin="119,174,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="155"/>
+                    <TextBox x:Name="HomeCountry" IsReadOnly="True" Height="23" Margin="119,211,280,0" TextWrapping="Wrap" VerticalAlignment="Top"/>
+                    <TextBox x:Name="HomePhone" IsReadOnly="True" HorizontalAlignment="Left" Height="23" Margin="371,34,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="173"/>
+                    <TextBox x:Name="HomeCell" IsReadOnly="True" HorizontalAlignment="Left" Height="23" Margin="371,72,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="173"/>
+                    <TextBox x:Name="HomeWebsite" IsReadOnly="True" HorizontalAlignment="Left" Height="23" Margin="119,332,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="369"/>
 
                 </Grid>
             </TabItem>
@@ -87,23 +89,23 @@
                     <Label  Content="Postal Code:" Margin="34,171,440,0" VerticalAlignment="Top" FontWeight="Bold"/>
                     <Label  Content="Country/Region:" Margin="10,208,440,0" VerticalAlignment="Top" FontWeight="Bold"/>
                     <Label  Content="Website:" HorizontalAlignment="Left" Margin="55,328,0,0" VerticalAlignment="Top" FontWeight="Bold"/>
-                    <Button  Content="Go" HorizontalAlignment="Left" Margin="504,332,0,0" VerticalAlignment="Top" Width="40"/>
+                    <Button  Content="Go" HorizontalAlignment="Left" Margin="504,332,0,0" VerticalAlignment="Top" Width="40" IsEnabled="{Binding ElementName=WorkWebsite, Path=Text.Length, Mode=OneWay}" Click="Button_Click_1"/>
                     <Label  Content="Phone:" HorizontalAlignment="Left" Margin="317,171,0,0" VerticalAlignment="Top" FontWeight="Bold"/>
                     <Label  Content="Office:" HorizontalAlignment="Left" Margin="319,134,0,0" VerticalAlignment="Top" FontWeight="Bold"/>
-                    <TextBox x:Name="WorkStreet" HorizontalAlignment="Left" Height="49" Margin="119,39,0,0" TextWrapping="Wrap" Text="TextBox" VerticalAlignment="Top" Width="140"/>
-                    <TextBox x:Name="WorkCity" HorizontalAlignment="Left" Height="23" Margin="119,100,0,0" TextWrapping="Wrap" Text="TextBox" VerticalAlignment="Top" Width="140"/>
-                    <TextBox x:Name="WorkProvince" HorizontalAlignment="Left" Margin="119,137,0,213" TextWrapping="Wrap" Text="TextBox" Width="140"/>
-                    <TextBox x:Name="WorkPostal" HorizontalAlignment="Left" Height="23" Margin="119,174,0,0" TextWrapping="Wrap" Text="TextBox" VerticalAlignment="Top" Width="140"/>
-                    <TextBox x:Name="WorkCountry" HorizontalAlignment="Left" Height="23" Margin="119,211,0,0" TextWrapping="Wrap" Text="TextBox" VerticalAlignment="Top" Width="140"/>
-                    <TextBox x:Name="WorkCompany" HorizontalAlignment="Left" Height="23" Margin="371,34,0,0" TextWrapping="Wrap" Text="TextBox" VerticalAlignment="Top" Width="173"/>
-                    <TextBox x:Name="WorkJobTitle" HorizontalAlignment="Left" Height="23" Margin="371,68,0,0" TextWrapping="Wrap" Text="TextBox" VerticalAlignment="Top" Width="173"/>
-                    <TextBox x:Name="WorkWebsite" HorizontalAlignment="Left" Height="23" Margin="119,332,0,0" TextWrapping="Wrap" Text="TextBox" VerticalAlignment="Top" Width="369"/>
+                    <TextBox x:Name="WorkStreet" IsReadOnly="True" ScrollViewer.HorizontalScrollBarVisibility="Disabled" ScrollViewer.VerticalScrollBarVisibility="Visible" HorizontalAlignment="Left" Height="49" Margin="119,39,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="155"/>
+                    <TextBox x:Name="WorkCity" IsReadOnly="True" HorizontalAlignment="Left" Height="23" Margin="119,100,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="155"/>
+                    <TextBox x:Name="WorkProvince" IsReadOnly="True" HorizontalAlignment="Left" Margin="119,137,0,213" TextWrapping="Wrap" Width="155"/>
+                    <TextBox x:Name="WorkPostal" IsReadOnly="True" HorizontalAlignment="Left" Height="23" Margin="119,174,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="155"/>
+                    <TextBox x:Name="WorkCountry" IsReadOnly="True" Height="23" Margin="119,211,280,0" TextWrapping="Wrap" VerticalAlignment="Top"/>
+                    <TextBox x:Name="WorkCompany" IsReadOnly="True" HorizontalAlignment="Left" Height="23" Margin="371,34,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="173"/>
+                    <TextBox x:Name="WorkJobTitle" IsReadOnly="True" HorizontalAlignment="Left" Height="23" Margin="371,68,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="173"/>
+                    <TextBox x:Name="WorkWebsite" IsReadOnly="True" HorizontalAlignment="Left" Height="23" Margin="119,332,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="369"/>
                     <Label Content="Company:" HorizontalAlignment="Left" Margin="299,31,0,0" VerticalAlignment="Top" FontWeight="Bold"/>
                     <Label Content="Job Title:" HorizontalAlignment="Left" Margin="304,65,0,0" VerticalAlignment="Top" FontWeight="Bold"/>
                     <Label Content="Department:" HorizontalAlignment="Left" Margin="285,97,0,0" VerticalAlignment="Top" FontWeight="Bold"/>
-                    <TextBox x:Name="WorkDepartment" HorizontalAlignment="Left" Height="23" Margin="371,100,0,0" TextWrapping="Wrap" Text="TextBox" VerticalAlignment="Top" Width="173"/>
-                    <TextBox x:Name="WorkOffice" HorizontalAlignment="Left" Height="23" Margin="371,137,0,0" TextWrapping="Wrap" Text="TextBox" VerticalAlignment="Top" Width="173"/>
-                    <TextBox x:Name="WorkPhone" HorizontalAlignment="Left" Height="23" Margin="371,174,0,0" TextWrapping="Wrap" Text="TextBox" VerticalAlignment="Top" Width="173"/>
+                    <TextBox x:Name="WorkDepartment" IsReadOnly="True" HorizontalAlignment="Left" Height="23" Margin="371,100,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="173"/>
+                    <TextBox x:Name="WorkOffice" IsReadOnly="True" HorizontalAlignment="Left" Height="23" Margin="371,137,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="173"/>
+                    <TextBox x:Name="WorkPhone" IsReadOnly="True" HorizontalAlignment="Left" Height="23" Margin="371,174,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="173"/>
 
                 </Grid>
             </TabItem>

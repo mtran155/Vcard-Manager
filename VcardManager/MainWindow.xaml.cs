@@ -72,23 +72,9 @@ namespace VcardManager
 
         private void About_Click(object sender, RoutedEventArgs e)
         {
-            MessageBox.Show("This is a Vcard Editor\n\n" +
+            MessageBox.Show("This is a Vcard Manager\n\n" +
                             "Created By: Michael Tran\n\n" +
                             "This application is only compatible with Vcard Version 3.0", "About Vcard Editor", MessageBoxButton.OK, MessageBoxImage.Information);
-        }
-
-        private void Flag_Click(object sender, RoutedEventArgs e)
-        {
-            string flagMeanging = "Flag Meanings:\n" +
-                                  "C = card as a whole is in canonical form\n" +
-                                  "M = card has multiple same mandatory propeties: FN or N\n" +
-                                  "U, P, G = card has at least one URL, PHOTO or GEO property\n";
-
-            string colourMeaning = "Colour Meanings:\nGreen = card is in canonical form (the C flag is on)\n" +
-                                   "Red = card needs fixing because (a) it has multiple mandatory properties (the M flag is on) or (b) its FN property has the same value as the preceding card\'s FN.\n" +
-                                   "Yellow  = default state if neither green nor red applies.\n";
-
-            MessageBox.Show(flagMeanging + "\n" + colourMeaning, "About Flags and Colour", MessageBoxButton.OK, MessageBoxImage.Information);
         }
 
         private void viewCard_Click(object sender, RoutedEventArgs e)
@@ -143,7 +129,12 @@ namespace VcardManager
             /*Summary Tab*/
             window.TextName.Text = card.Name;
             window.TextEmail.Text = card.mainEmail;
-            window.TextCompany.Text = card.Company;
+
+            if (card.Company != null)
+            {
+                window.TextCompany.Text = card.Company[0];
+            }
+            
             window.TextJobTitle.Text = card.Title;
             window.TextWorkPhone.Text = card.workPhone;
             window.TextWorkWebsite.Text = card.workWebsite;
@@ -182,9 +173,92 @@ namespace VcardManager
             /*************************************/
 
             /*Home Tab*/
+            if (card.homeAddress != null)
+            {
+                for (int i = 0; i < card.homeAddress.Length; i++)
+                {
+                    switch (i)
+                    {
+                        case 2:
+                            window.HomeStreet.Text = card.homeAddress[i];
+                            break;
+                        case 3:
+                            window.HomeCity.Text = card.homeAddress[i];
+                            break;
+                        case 4:
+                            window.HomeProvince.Text = card.homeAddress[i];
+                            break;
+                        case 5:
+                            window.HomePostal.Text = card.homeAddress[i];
+                            break;
+                        case 6:
+                            window.HomeCountry.Text = card.homeAddress[i];
+                            break;
+                        default:
+                            break;
+                    }
+                }
+            }
+            
+
+            window.HomePhone.Text = card.homePhone;
+            window.HomeCell.Text = card.cellPhone;
+            window.HomeWebsite.Text = card.Website;
             /*************************************/
 
             /*Work Tab*/
+            if (card.workAddress != null)
+            {
+                for (int i = 0; i < card.workAddress.Length; i++)
+                {
+                    switch (i)
+                    {
+                        case 1:
+                            window.WorkOffice.Text = card.workAddress[i];
+                            break;
+                        case 2:
+                            window.WorkStreet.Text = card.workAddress[i];
+                            break;
+                        case 3:
+                            window.WorkCity.Text = card.workAddress[i];
+                            break;
+                        case 4:
+                            window.WorkProvince.Text = card.workAddress[i];
+                            break;
+                        case 5:
+                            window.WorkPostal.Text = card.workAddress[i];
+                            break;
+                        case 6:
+                            window.WorkCountry.Text = card.workAddress[i];
+                            break;
+                        default:
+                            break;
+                    }
+                }
+            }
+
+            if (card.Company != null)
+            {
+                for (int i = 0; i < card.Company.Length; i++)
+                {
+                    switch (i)
+                    {
+                        case 0:
+                            window.WorkCompany.Text = card.Company[i];
+                            break;
+                        case 1:
+                            window.WorkDepartment.Text = card.Company[i];
+                            break;
+                        default:
+                            break;
+                    }
+                }                
+            }
+
+            
+            window.WorkJobTitle.Text = card.Title;
+            window.WorkPhone.Text = card.workPhone; 
+            window.WorkWebsite.Text = card.workWebsite;
             /*************************************/
 
             window.NotesTextBox.Text = card.Note;
@@ -325,7 +399,8 @@ namespace VcardManager
                     break;
 
                 case VcUtil.VcPname.VCP_ORG:
-                    card.Company = prop.getValue();
+                    tokens = prop.getValue().Split(';');
+                    card.Company = tokens;
                     break;
 
                 case VcUtil.VcPname.VCP_NOTE:

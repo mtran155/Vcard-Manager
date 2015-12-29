@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -27,6 +28,18 @@ namespace VcardManager
         private void close_Click(object sender, RoutedEventArgs e)
         {
             Close();
+        }
+
+        private void button_Click(object sender, RoutedEventArgs e)
+        {
+            string website = HomeWebsite.Text;
+            Process.Start(website); 
+        }
+
+        private void Button_Click_1(object sender, RoutedEventArgs e)
+        {
+            string website = WorkWebsite.Text;
+            Process.Start(website); 
         }
     }
 }
