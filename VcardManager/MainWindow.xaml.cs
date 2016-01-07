@@ -17,6 +17,10 @@ using System.Windows.Navigation;
 using System.Windows.Shapes;
 using VcardManager.Model;
 
+using System.Data.SQLite;
+
+
+
 namespace VcardManager
 {
     /// <summary>
@@ -28,10 +32,46 @@ namespace VcardManager
         VcUtil util = new VcUtil();
         VcUtil.VcFile filep = new VcUtil.VcFile();
         List<CardDetails> cardList = new List<CardDetails>();
+        SQLiteConnection db = new SQLiteConnection("Data Source=../../Database/VcardDatabase.db;Version=3;");
+        SQLiteCommand command;
+        SQLiteTransaction trans;
+
 
         public MainWindow()
         {
             InitializeComponent();
+            if (!File.Exists("../../Database/VcardDatabase.db")) { SQLiteConnection.CreateFile("../../Database/VcardDatabase.db"); }            
+            db.Open();
+
+            string sql = @"CREATE TABLE IF NOT EXISTS NAME (name_id INTEGER PRIMARY KEY, 
+                                                            name TEXT NOT NULL);";
+            command = new SQLiteCommand(sql, db);
+            command.ExecuteNonQuery();
+
+            sql = @"CREATE TABLE IF NOT EXISTS PROPERTY (name_id INTEGER NOT NULL, 
+                                                         pname TEXT NOT NULL, 
+                                                         pinst INTEGER NOT NULL, 
+                                                         partype TEXT, 
+                                                         parval TEXT, 
+                                                         value TEXT,
+                                                         PRIMARY KEY (name_id, pname, pinst),
+                                                         FOREIGN KEY (name_id) REFERENCES NAME (name_id) ON DELETE CASCADE);";
+
+            command = new SQLiteCommand(sql, db);
+            command.ExecuteNonQuery();
+
+            //sql = @"INSERT INTO NAME VALUES (null, 'DOUG');";
+            //command = new SQLiteCommand(sql, db);
+            //command.ExecuteNonQuery();
+
+            //sql = @"INSERT INTO NAME (name) VALUES ('JOE');";
+            //command = new SQLiteCommand(sql, db);
+            //command.ExecuteNonQuery();
+
+            //sql = @"SELECT * FROM NAME";
+            //command = new SQLiteCommand(sql, db);
+            //SQLiteDataReader reader = command.ExecuteReader();
+            //while (reader.Read()) { LogBox.Text += "Name: " + reader["name"]; }
         }
 
         private void OpenFile_Click(object sender, RoutedEventArgs e)
@@ -66,6 +106,7 @@ namespace VcardManager
             MessageBoxResult result = MessageBox.Show("Are you sure you want to close this applicaiton?", "Confirmation", MessageBoxButton.YesNo, MessageBoxImage.Warning);
             if (result == MessageBoxResult.Yes)
             {
+                db.Close();
                 Application.Current.Shutdown();
             }
         }
@@ -443,6 +484,242 @@ namespace VcardManager
             }
 
             return address.ToString();
+        }
+
+        protected override void OnClosed(EventArgs e)
+        {
+            db.Close();
+            base.OnClosed(e);
+        }
+
+        private void StoreAll_Click(object sender, RoutedEventArgs e)
+        {
+            string query= null;
+            int value = 0;
+
+            if(filep.getNcards() != 0)
+            {
+                for (int i = 0; i < filep.getNcards(); i++)
+                {
+                    int numFN = 0;
+                    int numNick = 0;
+                    int numPhoto = 0;
+                    int numBday = 0;
+                    int numAdr = 0;
+                    int numLabel = 0;
+                    int numTel = 0;
+                    int numEmail = 0;
+                    int numGeo = 0;
+                    int numTitle = 0;
+                    int numOrg = 0;
+                    int numNote = 0;
+                    int numUid = 0;
+                    int numUrl = 0;
+                    int numOther = 0;
+
+                    int nameID = 0;
+
+                    for (int j = 0; j < filep.getCardp(i).getNprops(); j++)
+                    {
+
+                        if (filep.getCardp(i).getProp(j).getName() == VcUtil.VcPname.VCP_N)
+                        {
+                            bool duplicate = checkExistingCard(filep.getCardp(i).getProp(j).getValue());
+
+                            if (!duplicate)
+                            {
+                                query = "INSERT INTO NAME VALUES (NULL, @name);";
+                                command = new SQLiteCommand(query, db);
+                                command.Parameters.AddWithValue("@name", filep.getCardp(i).getProp(j).getValue());
+
+                                try
+                                {
+                                    command.ExecuteNonQuery();
+                                }
+                                catch (Exception)
+                                {
+                                    LogBox.Text = "Vcard already exists";
+                                }
+
+                                query = "SELECT last_insert_rowid();";
+                                command = new SQLiteCommand(query, db);
+                                nameID = Convert.ToInt32(command.ExecuteScalar());
+                            }
+                            else
+                            {
+                                LogBox.Text += "checking dups " + i + "\n";
+                                break;
+                            }
+                            
+                        }
+                        else
+                        {
+                            if (filep.getCardp(i).getProp(j).getName() == VcUtil.VcPname.VCP_FN)
+                            {
+                                numFN += 1;
+                                value = numFN;
+                            }
+                            if (filep.getCardp(i).getProp(j).getName() == VcUtil.VcPname.VCP_NICKNAME)
+                            {
+                                numNick += 1;
+                                value = numNick;
+                            }
+                            if (filep.getCardp(i).getProp(j).getName() == VcUtil.VcPname.VCP_PHOTO)
+                            {
+                                numPhoto += 1;
+                                value = numPhoto;
+                            }
+                            if (filep.getCardp(i).getProp(j).getName() == VcUtil.VcPname.VCP_BDAY)
+                            {
+                                numBday += 1;
+                                value = numBday;
+                            }
+                            if (filep.getCardp(i).getProp(j).getName() == VcUtil.VcPname.VCP_ADR)
+                            {
+                                numAdr += 1;
+                                value = numAdr;
+                            }
+                            if (filep.getCardp(i).getProp(j).getName() == VcUtil.VcPname.VCP_LABEL)
+                            {
+                                numLabel += 1;
+                                value = numLabel;
+                            }
+                            if (filep.getCardp(i).getProp(j).getName() == VcUtil.VcPname.VCP_TEL)
+                            {
+                                numTel += 1;
+                                value = numTel;
+                            }
+                            if (filep.getCardp(i).getProp(j).getName() == VcUtil.VcPname.VCP_EMAIL)
+                            {
+                                numEmail += 1;
+                                value = numEmail;
+                            }
+                            if (filep.getCardp(i).getProp(j).getName() == VcUtil.VcPname.VCP_GEO)
+                            {
+                                numGeo += 1;
+                                value = numGeo;
+                            }
+                            if (filep.getCardp(i).getProp(j).getName() == VcUtil.VcPname.VCP_TITLE)
+                            {
+                                numTitle += 1;
+                                value = numTitle;
+                            }
+                            if (filep.getCardp(i).getProp(j).getName() == VcUtil.VcPname.VCP_ORG)
+                            {
+                                numOrg += 1;
+                                value = numOrg;
+                            }
+                            if (filep.getCardp(i).getProp(j).getName() == VcUtil.VcPname.VCP_NOTE)
+                            {
+                                numNote += 1;
+                                value = numNote;
+                            }
+                            if (filep.getCardp(i).getProp(j).getName() == VcUtil.VcPname.VCP_UID)
+                            {
+                                numUid += 1;
+                                value = numUid;
+                            }
+                            if (filep.getCardp(i).getProp(j).getName() == VcUtil.VcPname.VCP_URL)
+                            {
+                                numUrl += 1;
+                                value = numUrl;
+                            }
+                            if (filep.getCardp(i).getProp(j).getName() == VcUtil.VcPname.VCP_OTHER)
+                            {
+                                numOther += 1;
+                                value = numOther;
+                            }
+
+                            query = "INSERT INTO PROPERTY (name_id, pname, pinst, partype, parval, value) VALUES (@ID, @pname, @pinst, @partype, @parval, @value)";
+                            command = new SQLiteCommand(query, db);
+                            command.Parameters.AddWithValue("@ID", nameID);
+                            command.Parameters.AddWithValue("@pname", pNameConvertor(filep.getCardp(i).getProp(j).getName()));
+                            command.Parameters.AddWithValue("@pinst", value);
+                            command.Parameters.AddWithValue("@partype", filep.getCardp(i).getProp(j).getPartype());
+                            command.Parameters.AddWithValue("@parval", filep.getCardp(i).getProp(j).getParVal());
+                            command.Parameters.AddWithValue("@value", filep.getCardp(i).getProp(j).getValue());
+                            command.ExecuteNonQuery();
+                        }                  
+                    }
+                }
+            }
+            else
+            {
+                MessageBox.Show("No cards are loaded to store", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
+        }
+
+        private string pNameConvertor(VcUtil.VcPname value)
+        {
+            string name = null;
+
+            switch (value)
+            {
+                case VcUtil.VcPname.VCP_FN:
+                    name = "FN";
+                    break;
+                case VcUtil.VcPname.VCP_NICKNAME:
+                    name = "NICKNAME";
+                    break;
+                case VcUtil.VcPname.VCP_PHOTO:
+                    name = "PHOTO";
+                    break;
+                case VcUtil.VcPname.VCP_BDAY:
+                    name = "BDAY";
+                    break;
+                case VcUtil.VcPname.VCP_ADR:
+                    name = "ADR";
+                    break;
+                case VcUtil.VcPname.VCP_LABEL:
+                    name = "LABEL";
+                    break;
+                case VcUtil.VcPname.VCP_TEL:
+                    name = "TEL";
+                    break;
+                case VcUtil.VcPname.VCP_EMAIL:
+                    name = "EMAIL";
+                    break;
+                case VcUtil.VcPname.VCP_GEO:
+                    name = "GEO";
+                    break;
+                case VcUtil.VcPname.VCP_TITLE:
+                    name = "TITLE";
+                    break;
+                case VcUtil.VcPname.VCP_ORG:
+                    name = "ORG";
+                    break;
+                case VcUtil.VcPname.VCP_NOTE:
+                    name = "NOTE";
+                    break;
+                case VcUtil.VcPname.VCP_UID:
+                    name = "UID";
+                    break;
+                case VcUtil.VcPname.VCP_URL:
+                    name = "URL";
+                    break;
+                case VcUtil.VcPname.VCP_OTHER:
+                    name = "OTHER";
+                    break;
+                default:
+                    break;
+            }
+
+            return name;
+        }
+
+        private bool checkExistingCard(string name)
+        {
+            string query = "SELECT COUNT(*) FROM NAME WHERE ([name] = @name);";
+            command = new SQLiteCommand(query, db);
+            command.Parameters.AddWithValue("@name", name);
+            int UserExist = Convert.ToInt32(command.ExecuteScalar());
+
+            if (UserExist > 0)
+            {
+                return true;
+            }
+            else
+                return false;
         }
     }
 }

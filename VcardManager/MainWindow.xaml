@@ -19,6 +19,10 @@
                 <!--<MenuItem Header="_Save"/>-->
                 <MenuItem Header="_Close" Click="CloseFile_Click"/>
             </MenuItem>
+            <MenuItem Header="Database">
+                <MenuItem Header="Open"></MenuItem>
+                <MenuItem Header="Store All" Click="StoreAll_Click"/>
+            </MenuItem>
             <MenuItem Header="Help">
                 <MenuItem Header="About" Click="About_Click"/>
             </MenuItem>
