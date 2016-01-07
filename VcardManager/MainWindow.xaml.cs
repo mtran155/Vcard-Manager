@@ -554,82 +554,7 @@ namespace VcardManager
                         }
                         else
                         {
-                            if (filep.getCardp(i).getProp(j).getName() == VcUtil.VcPname.VCP_FN)
-                            {
-                                numFN += 1;
-                                value = numFN;
-                            }
-                            if (filep.getCardp(i).getProp(j).getName() == VcUtil.VcPname.VCP_NICKNAME)
-                            {
-                                numNick += 1;
-                                value = numNick;
-                            }
-                            if (filep.getCardp(i).getProp(j).getName() == VcUtil.VcPname.VCP_PHOTO)
-                            {
-                                numPhoto += 1;
-                                value = numPhoto;
-                            }
-                            if (filep.getCardp(i).getProp(j).getName() == VcUtil.VcPname.VCP_BDAY)
-                            {
-                                numBday += 1;
-                                value = numBday;
-                            }
-                            if (filep.getCardp(i).getProp(j).getName() == VcUtil.VcPname.VCP_ADR)
-                            {
-                                numAdr += 1;
-                                value = numAdr;
-                            }
-                            if (filep.getCardp(i).getProp(j).getName() == VcUtil.VcPname.VCP_LABEL)
-                            {
-                                numLabel += 1;
-                                value = numLabel;
-                            }
-                            if (filep.getCardp(i).getProp(j).getName() == VcUtil.VcPname.VCP_TEL)
-                            {
-                                numTel += 1;
-                                value = numTel;
-                            }
-                            if (filep.getCardp(i).getProp(j).getName() == VcUtil.VcPname.VCP_EMAIL)
-                            {
-                                numEmail += 1;
-                                value = numEmail;
-                            }
-                            if (filep.getCardp(i).getProp(j).getName() == VcUtil.VcPname.VCP_GEO)
-                            {
-                                numGeo += 1;
-                                value = numGeo;
-                            }
-                            if (filep.getCardp(i).getProp(j).getName() == VcUtil.VcPname.VCP_TITLE)
-                            {
-                                numTitle += 1;
-                                value = numTitle;
-                            }
-                            if (filep.getCardp(i).getProp(j).getName() == VcUtil.VcPname.VCP_ORG)
-                            {
-                                numOrg += 1;
-                                value = numOrg;
-                            }
-                            if (filep.getCardp(i).getProp(j).getName() == VcUtil.VcPname.VCP_NOTE)
-                            {
-                                numNote += 1;
-                                value = numNote;
-                            }
-                            if (filep.getCardp(i).getProp(j).getName() == VcUtil.VcPname.VCP_UID)
-                            {
-                                numUid += 1;
-                                value = numUid;
-                            }
-                            if (filep.getCardp(i).getProp(j).getName() == VcUtil.VcPname.VCP_URL)
-                            {
-                                numUrl += 1;
-                                value = numUrl;
-                            }
-                            if (filep.getCardp(i).getProp(j).getName() == VcUtil.VcPname.VCP_OTHER)
-                            {
-                                numOther += 1;
-                                value = numOther;
-                            }
-
+                            value = numPinst(nameID, filep.getCardp(i).getProp(j).getName());
                             query = "INSERT INTO PROPERTY (name_id, pname, pinst, partype, parval, value) VALUES (@ID, @pname, @pinst, @partype, @parval, @value)";
                             command = new SQLiteCommand(query, db);
                             command.Parameters.AddWithValue("@ID", nameID);
@@ -638,7 +563,7 @@ namespace VcardManager
                             command.Parameters.AddWithValue("@partype", filep.getCardp(i).getProp(j).getPartype());
                             command.Parameters.AddWithValue("@parval", filep.getCardp(i).getProp(j).getParVal());
                             command.Parameters.AddWithValue("@value", filep.getCardp(i).getProp(j).getValue());
-                            command.ExecuteNonQuery();
+                            command.ExecuteNonQuery();                            
                         }                  
                     }
                 }
@@ -720,6 +645,19 @@ namespace VcardManager
             }
             else
                 return false;
+        }
+
+        private int numPinst(int nameID, VcUtil.VcPname name)
+        {
+            string query = "SELECT COUNT(*) FROM PROPERTY WHERE ([name_id] = @nameID) AND ([pname] = @pname);";
+            command = new SQLiteCommand(query, db);
+            command.Parameters.AddWithValue("@nameID", nameID);
+            command.Parameters.AddWithValue("@pname", pNameConvertor(name));
+            int count = Convert.ToInt32(command.ExecuteScalar());
+
+            //LogBox.Text += "" + pNameConvertor(name) + " what count equals = " + count + "\n";
+
+            return (count + 1);
         }
     }
 }
