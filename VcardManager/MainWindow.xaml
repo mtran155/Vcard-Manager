@@ -8,7 +8,6 @@
         Title="Vcard Editor" Height="600" Width="1000"
         ResizeMode="NoResize">
     <Window.Resources>
-        <local:NameToBrushConverter x:Key="NameToBrushConverter"/>
         <BitmapImage x:Key="DefaultImage" UriSource="/Images/BlankProfile.png"/>
     </Window.Resources>
 
@@ -20,7 +19,7 @@
                 <MenuItem Header="_Close" Click="CloseFile_Click"/>
             </MenuItem>
             <MenuItem Header="Database">
-                <MenuItem Header="Open"></MenuItem>
+                <MenuItem Header="Open" Click="OpenDatabase_Click"/>
                 <MenuItem Header="Store All" Click="StoreAll_Click"/>
             </MenuItem>
             <MenuItem Header="Help">

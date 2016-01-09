@@ -28,18 +28,18 @@ namespace VcardManager
             VCP_END,
             VCP_VERSION,
             VCP_N,      // name
-            VCP_FN,     // formatted name
-            VCP_NICKNAME,
-            VCP_PHOTO,
-            VCP_BDAY,
             VCP_ADR,    // address
-            VCP_LABEL,  // address formatted for printing
-            VCP_TEL,
+            VCP_BDAY,
             VCP_EMAIL,
+            VCP_FN,     // formatted name
             VCP_GEO,    // lat,long
-            VCP_TITLE,
-            VCP_ORG,
+            VCP_LABEL,  // address formatted for printing
+            VCP_NICKNAME,
             VCP_NOTE,
+            VCP_ORG,
+            VCP_PHOTO,
+            VCP_TEL,
+            VCP_TITLE,
             VCP_UID,    // unique ID
             VCP_URL,
             VCP_OTHER,   // used for any other property name
@@ -218,7 +218,37 @@ namespace VcardManager
 
             public void setProplist(VcProp value)
             {
-                propList.Add(value);
+                if (getNprops() > 0)
+                {
+                    bool added = false;
+
+                    for (int i = 0; i < getNprops(); i++)
+                    {
+                        VcProp prop = getProp(i);
+                        //Console.WriteLine(prop.getName() + " " + prop.getValue());
+                        if (value.getName() < prop.getName())
+                        {
+                            propList.Insert(i, value);
+                            added = true;
+                            break;
+                        }
+
+                        if (value.getName() == prop.getName())
+                        {
+                            propList.Insert(i + 1, value);
+                            added = true;
+                            break;
+                        }
+                    }
+                    if (!added)
+                    {
+                        propList.Add(value);
+                    }
+                }
+                else
+                {
+                    propList.Add(value);
+                }
             }
 
             public int getNprops()
@@ -792,7 +822,7 @@ namespace VcardManager
 
             return counter;
         }
-        static private VcPname getVcPname(string name)
+        public VcPname getVcPname(string name)
         {
             VcPname propName;
 
@@ -945,90 +975,63 @@ namespace VcardManager
             }
             return 4;
         }
-        static private string propertyName(VcPname prop)
+        public string propertyName(VcPname prop)
         {
             string name = null;
 
-            if (prop == VcPname.VCP_N)
+            switch (prop)
             {
-                name = "N";
-                return name;
+                case VcUtil.VcPname.VCP_FN:
+                    name = "FN";
+                    break;
+                case VcUtil.VcPname.VCP_NICKNAME:
+                    name = "NICKNAME";
+                    break;
+                case VcUtil.VcPname.VCP_PHOTO:
+                    name = "PHOTO";
+                    break;
+                case VcUtil.VcPname.VCP_BDAY:
+                    name = "BDAY";
+                    break;
+                case VcUtil.VcPname.VCP_ADR:
+                    name = "ADR";
+                    break;
+                case VcUtil.VcPname.VCP_LABEL:
+                    name = "LABEL";
+                    break;
+                case VcUtil.VcPname.VCP_TEL:
+                    name = "TEL";
+                    break;
+                case VcUtil.VcPname.VCP_EMAIL:
+                    name = "EMAIL";
+                    break;
+                case VcUtil.VcPname.VCP_GEO:
+                    name = "GEO";
+                    break;
+                case VcUtil.VcPname.VCP_TITLE:
+                    name = "TITLE";
+                    break;
+                case VcUtil.VcPname.VCP_ORG:
+                    name = "ORG";
+                    break;
+                case VcUtil.VcPname.VCP_NOTE:
+                    name = "NOTE";
+                    break;
+                case VcUtil.VcPname.VCP_UID:
+                    name = "UID";
+                    break;
+                case VcUtil.VcPname.VCP_URL:
+                    name = "URL";
+                    break;
+                case VcUtil.VcPname.VCP_OTHER:
+                    name = "OTHER";
+                    break;
+                default:
+                    name = "";
+                    break;
             }
-            else if (prop == VcPname.VCP_FN)
-            {
-                name = "FN";
-                return name;
-            }
-            else if (prop == VcPname.VCP_NICKNAME)
-            {
-                name = "NICKNAME";
-                return name;
-            }
-            else if (prop == VcPname.VCP_PHOTO)
-            {
-                name = "PHOTO";
-                return name;
-            }
-            else if (prop == VcPname.VCP_BDAY)
-            {
-                name = "BDAY";
-                return name;
-            }
-            else if (prop == VcPname.VCP_ADR)
-            {
-                name = "ADR";
-                return name;
-            }
-            else if (prop == VcPname.VCP_LABEL)
-            {
-                name = "LABEL";
-                return name;
-            }
-            else if (prop == VcPname.VCP_TEL)
-            {
-                name = "TEL";
-                return name;
-            }
-            else if (prop == VcPname.VCP_EMAIL)
-            {
-                name = "EMAIL";
-                return name;
-            }
-            else if (prop == VcPname.VCP_GEO)
-            {
-                name = "GEO";
-                return name;
-            }
-            else if (prop == VcPname.VCP_TITLE)
-            {
-                name = "TITLE";
-                return name;
-            }
-            else if (prop == VcPname.VCP_ORG)
-            {
-                name = "ORG";
-                return name;
-            }
-            else if (prop == VcPname.VCP_NOTE)
-            {
-                name = "NOTE";
-                return name;
-            }
-            else if (prop == VcPname.VCP_UID)
-            {
-                name = "UID";
-                return name;
-            }
-            else if (prop == VcPname.VCP_URL)
-            {
-                name = "URL";
-                return name;
-            }
-            else
-            {
-                name = "";
-                return name;
-            }
+
+            return name;
         }
     }
 }

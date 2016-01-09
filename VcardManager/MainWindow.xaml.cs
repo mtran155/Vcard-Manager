@@ -34,7 +34,6 @@ namespace VcardManager
         List<CardDetails> cardList = new List<CardDetails>();
         SQLiteConnection db = new SQLiteConnection("Data Source=../../Database/VcardDatabase.db;Version=3;");
         SQLiteCommand command;
-        SQLiteTransaction trans;
 
 
         public MainWindow()
@@ -306,7 +305,7 @@ namespace VcardManager
             
         }
 
-        public void RefreshCardDisplay()
+        private void RefreshCardDisplay()
         {
             for (int i = 0; i < filep.getNcards(); i++)
             {
@@ -496,32 +495,14 @@ namespace VcardManager
         {
             string query= null;
             int value = 0;
+            int nameID = 0;
 
-            if(filep.getNcards() != 0)
+            if (filep.getNcards() != 0)
             {
                 for (int i = 0; i < filep.getNcards(); i++)
-                {
-                    int numFN = 0;
-                    int numNick = 0;
-                    int numPhoto = 0;
-                    int numBday = 0;
-                    int numAdr = 0;
-                    int numLabel = 0;
-                    int numTel = 0;
-                    int numEmail = 0;
-                    int numGeo = 0;
-                    int numTitle = 0;
-                    int numOrg = 0;
-                    int numNote = 0;
-                    int numUid = 0;
-                    int numUrl = 0;
-                    int numOther = 0;
-
-                    int nameID = 0;
-
+                {                
                     for (int j = 0; j < filep.getCardp(i).getNprops(); j++)
                     {
-
                         if (filep.getCardp(i).getProp(j).getName() == VcUtil.VcPname.VCP_N)
                         {
                             bool duplicate = checkExistingCard(filep.getCardp(i).getProp(j).getValue());
@@ -531,15 +512,7 @@ namespace VcardManager
                                 query = "INSERT INTO NAME VALUES (NULL, @name);";
                                 command = new SQLiteCommand(query, db);
                                 command.Parameters.AddWithValue("@name", filep.getCardp(i).getProp(j).getValue());
-
-                                try
-                                {
-                                    command.ExecuteNonQuery();
-                                }
-                                catch (Exception)
-                                {
-                                    LogBox.Text = "Vcard already exists";
-                                }
+                                command.ExecuteNonQuery();
 
                                 query = "SELECT last_insert_rowid();";
                                 command = new SQLiteCommand(query, db);
@@ -547,7 +520,9 @@ namespace VcardManager
                             }
                             else
                             {
-                                LogBox.Text += "checking dups " + i + "\n";
+                                Window2 window = new Window2(command, db, filep.getCardp(i), filep.getCardp(i).getProp(j).getValue());
+                                window.ShowDialog();
+                                //LogBox.Text += "checking dups " + i + "\n";
                                 break;
                             }
                             
@@ -558,7 +533,7 @@ namespace VcardManager
                             query = "INSERT INTO PROPERTY (name_id, pname, pinst, partype, parval, value) VALUES (@ID, @pname, @pinst, @partype, @parval, @value)";
                             command = new SQLiteCommand(query, db);
                             command.Parameters.AddWithValue("@ID", nameID);
-                            command.Parameters.AddWithValue("@pname", pNameConvertor(filep.getCardp(i).getProp(j).getName()));
+                            command.Parameters.AddWithValue("@pname", util.propertyName(filep.getCardp(i).getProp(j).getName()));
                             command.Parameters.AddWithValue("@pinst", value);
                             command.Parameters.AddWithValue("@partype", filep.getCardp(i).getProp(j).getPartype());
                             command.Parameters.AddWithValue("@parval", filep.getCardp(i).getProp(j).getParVal());
@@ -572,64 +547,6 @@ namespace VcardManager
             {
                 MessageBox.Show("No cards are loaded to store", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
             }
-        }
-
-        private string pNameConvertor(VcUtil.VcPname value)
-        {
-            string name = null;
-
-            switch (value)
-            {
-                case VcUtil.VcPname.VCP_FN:
-                    name = "FN";
-                    break;
-                case VcUtil.VcPname.VCP_NICKNAME:
-                    name = "NICKNAME";
-                    break;
-                case VcUtil.VcPname.VCP_PHOTO:
-                    name = "PHOTO";
-                    break;
-                case VcUtil.VcPname.VCP_BDAY:
-                    name = "BDAY";
-                    break;
-                case VcUtil.VcPname.VCP_ADR:
-                    name = "ADR";
-                    break;
-                case VcUtil.VcPname.VCP_LABEL:
-                    name = "LABEL";
-                    break;
-                case VcUtil.VcPname.VCP_TEL:
-                    name = "TEL";
-                    break;
-                case VcUtil.VcPname.VCP_EMAIL:
-                    name = "EMAIL";
-                    break;
-                case VcUtil.VcPname.VCP_GEO:
-                    name = "GEO";
-                    break;
-                case VcUtil.VcPname.VCP_TITLE:
-                    name = "TITLE";
-                    break;
-                case VcUtil.VcPname.VCP_ORG:
-                    name = "ORG";
-                    break;
-                case VcUtil.VcPname.VCP_NOTE:
-                    name = "NOTE";
-                    break;
-                case VcUtil.VcPname.VCP_UID:
-                    name = "UID";
-                    break;
-                case VcUtil.VcPname.VCP_URL:
-                    name = "URL";
-                    break;
-                case VcUtil.VcPname.VCP_OTHER:
-                    name = "OTHER";
-                    break;
-                default:
-                    break;
-            }
-
-            return name;
         }
 
         private bool checkExistingCard(string name)
@@ -652,12 +569,75 @@ namespace VcardManager
             string query = "SELECT COUNT(*) FROM PROPERTY WHERE ([name_id] = @nameID) AND ([pname] = @pname);";
             command = new SQLiteCommand(query, db);
             command.Parameters.AddWithValue("@nameID", nameID);
-            command.Parameters.AddWithValue("@pname", pNameConvertor(name));
+            //command.Parameters.AddWithValue("@pname", pNameConvertor(name));
+            command.Parameters.AddWithValue("@pname", util.propertyName(name));
             int count = Convert.ToInt32(command.ExecuteScalar());
 
             //LogBox.Text += "" + pNameConvertor(name) + " what count equals = " + count + "\n";
 
             return (count + 1);
         }
+
+        private void OpenDatabase_Click(object sender, RoutedEventArgs e)
+        {
+            VcUtil.Vcard card;
+            VcUtil.VcProp prop;
+            string query;
+            SQLiteDataReader reader1;
+            SQLiteDataReader reader2;
+
+            query = @"SELECT * FROM NAME";
+            command = new SQLiteCommand(query, db);
+            reader1 = command.ExecuteReader();
+            int count = reader1["name"].ToString().Length;
+
+            if (count == 0)
+            {
+                MessageBox.Show("No cards have been stored in database.\nCannot load from database", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
+            else
+            {
+                filep = new VcUtil.VcFile();
+
+                while (reader1.Read())
+                {
+                    //LogBox.Text += "Name: " + reader["name"].ToString() + "\n"; 
+
+                    card = new VcUtil.Vcard();
+                    prop = new VcUtil.VcProp();
+
+                    prop.setName(VcUtil.VcPname.VCP_N);
+                    prop.setPartype("");
+                    prop.setParval("");
+                    prop.setValue(reader1["name"].ToString());
+
+                    card.setProplist(prop);
+                    card.setNprops(1);
+
+                    query = @"SELECT * FROM PROPERTY WHERE ([name_id] = @nameID);";
+                    command = new SQLiteCommand(query, db);
+                    command.Parameters.AddWithValue("@nameID", reader1["name_id"]);
+                    reader2 = command.ExecuteReader();
+
+                    while (reader2.Read())
+                    {
+                        prop = new VcUtil.VcProp();
+                        //LogBox.Text += "PNAME: " + reader2["pname"].ToString() + " PARTYPE: " + reader2["partype"].ToString() + " PARVAL: " + reader2["parval"].ToString() + "  VALUE: " + reader2["value"].ToString() + "\n";
+                        prop.setName(util.getVcPname(reader2["pname"].ToString()));
+                        prop.setPartype(reader2["partype"].ToString());
+                        prop.setParval(reader2["parval"].ToString());
+                        prop.setValue(reader2["value"].ToString());
+
+                        card.setProplist(prop);
+                        card.setNprops(1);
+                    }
+
+                    filep.setCardp(card);
+                    filep.setNcards(1);
+                }
+                RefreshCardDisplay();
+            }
+        }
+
     }
 }
