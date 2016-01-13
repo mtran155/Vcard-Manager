@@ -822,6 +822,118 @@ namespace VcardManager
 
             return counter;
         }
+        static private int paramCheck(string param)
+        {
+            if (param[0] == ' ' || param[0] == '=' || param.Contains(" "))
+            {
+                return 5;
+            }
+
+            if (param.Contains("TYPE"))
+            {
+                if (param[4] == '=')
+                {
+                    return 1;
+                }
+                else
+                {
+                    return 4;
+                }
+            }
+            else if (param.Contains("VALUE"))
+            {
+                if (param[5] == '=')
+                {
+                    return 2;
+                }
+                else
+                {
+                    return 4;
+                }
+            }
+            else if (param.Contains("ENCODING"))
+            {
+                if (param[8] == '=')
+                {
+                    return 3;
+                }
+                else
+                {
+                    return 4;
+                }
+            }
+            else if (param.Contains("CHARSET"))
+            {
+                if (param[7] == '=')
+                {
+                    return 3;
+                }
+                else
+                {
+                    return 4;
+                }
+            }
+            return 4;
+        }
+
+        public string propertyName(VcPname prop)
+        {
+            string name = null;
+
+            switch (prop)
+            {
+                case VcUtil.VcPname.VCP_FN:
+                    name = "FN";
+                    break;
+                case VcUtil.VcPname.VCP_NICKNAME:
+                    name = "NICKNAME";
+                    break;
+                case VcUtil.VcPname.VCP_PHOTO:
+                    name = "PHOTO";
+                    break;
+                case VcUtil.VcPname.VCP_BDAY:
+                    name = "BDAY";
+                    break;
+                case VcUtil.VcPname.VCP_ADR:
+                    name = "ADR";
+                    break;
+                case VcUtil.VcPname.VCP_LABEL:
+                    name = "LABEL";
+                    break;
+                case VcUtil.VcPname.VCP_TEL:
+                    name = "TEL";
+                    break;
+                case VcUtil.VcPname.VCP_EMAIL:
+                    name = "EMAIL";
+                    break;
+                case VcUtil.VcPname.VCP_GEO:
+                    name = "GEO";
+                    break;
+                case VcUtil.VcPname.VCP_TITLE:
+                    name = "TITLE";
+                    break;
+                case VcUtil.VcPname.VCP_ORG:
+                    name = "ORG";
+                    break;
+                case VcUtil.VcPname.VCP_NOTE:
+                    name = "NOTE";
+                    break;
+                case VcUtil.VcPname.VCP_UID:
+                    name = "UID";
+                    break;
+                case VcUtil.VcPname.VCP_URL:
+                    name = "URL";
+                    break;
+                case VcUtil.VcPname.VCP_OTHER:
+                    name = "OTHER";
+                    break;
+                default:
+                    name = "";
+                    break;
+            }
+
+            return name;
+        }
         public VcPname getVcPname(string name)
         {
             VcPname propName;
@@ -921,117 +1033,6 @@ namespace VcardManager
                 propName = VcPname.VCP_OTHER;
                 return propName;
             }
-        }
-        static private int paramCheck(string param)
-        {
-            if (param[0] == ' ' || param[0] == '=' || param.Contains(" "))
-            {
-                return 5;
-            }
-
-            if (param.Contains("TYPE"))
-            {
-                if (param[4] == '=')
-                {
-                    return 1;
-                }
-                else
-                {
-                    return 4;
-                }
-            }
-            else if (param.Contains("VALUE"))
-            {
-                if (param[5] == '=')
-                {
-                    return 2;
-                }
-                else
-                {
-                    return 4;
-                }
-            }
-            else if (param.Contains("ENCODING"))
-            {
-                if (param[8] == '=')
-                {
-                    return 3;
-                }
-                else
-                {
-                    return 4;
-                }
-            }
-            else if (param.Contains("CHARSET"))
-            {
-                if (param[7] == '=')
-                {
-                    return 3;
-                }
-                else
-                {
-                    return 4;
-                }
-            }
-            return 4;
-        }
-        public string propertyName(VcPname prop)
-        {
-            string name = null;
-
-            switch (prop)
-            {
-                case VcUtil.VcPname.VCP_FN:
-                    name = "FN";
-                    break;
-                case VcUtil.VcPname.VCP_NICKNAME:
-                    name = "NICKNAME";
-                    break;
-                case VcUtil.VcPname.VCP_PHOTO:
-                    name = "PHOTO";
-                    break;
-                case VcUtil.VcPname.VCP_BDAY:
-                    name = "BDAY";
-                    break;
-                case VcUtil.VcPname.VCP_ADR:
-                    name = "ADR";
-                    break;
-                case VcUtil.VcPname.VCP_LABEL:
-                    name = "LABEL";
-                    break;
-                case VcUtil.VcPname.VCP_TEL:
-                    name = "TEL";
-                    break;
-                case VcUtil.VcPname.VCP_EMAIL:
-                    name = "EMAIL";
-                    break;
-                case VcUtil.VcPname.VCP_GEO:
-                    name = "GEO";
-                    break;
-                case VcUtil.VcPname.VCP_TITLE:
-                    name = "TITLE";
-                    break;
-                case VcUtil.VcPname.VCP_ORG:
-                    name = "ORG";
-                    break;
-                case VcUtil.VcPname.VCP_NOTE:
-                    name = "NOTE";
-                    break;
-                case VcUtil.VcPname.VCP_UID:
-                    name = "UID";
-                    break;
-                case VcUtil.VcPname.VCP_URL:
-                    name = "URL";
-                    break;
-                case VcUtil.VcPname.VCP_OTHER:
-                    name = "OTHER";
-                    break;
-                default:
-                    name = "";
-                    break;
-            }
-
-            return name;
         }
     }
 }

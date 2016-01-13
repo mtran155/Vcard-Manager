@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:VcardManager"
         mc:Ignorable="d"
-        Title="Window1" Height="490" Width="590"
+        Title="Window1" Height="490" Width="600"
         ResizeMode="NoResize">
 
 
