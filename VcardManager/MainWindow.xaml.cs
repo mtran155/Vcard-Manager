@@ -95,7 +95,8 @@ namespace VcardManager
                 }
                 else
                 {
-                    LogBox.Text = status.getCode().ToString();
+                    MessageBox.Show("Could not open file. Error code: " + status.getCode().ToString(), "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                    //LogBox.Text = status.getCode().ToString();
                 }
                 //LogBox.Text = filep.ToString();
 
@@ -285,6 +286,8 @@ namespace VcardManager
             string query = null;
             int value = 0;
             int nameID = 0;
+            bool duplicate = false;
+            StringBuilder nameList = new StringBuilder();
 
             if (cardList.Count != 0)
             {
@@ -294,7 +297,7 @@ namespace VcardManager
                     {
                         if (filep.getCardp(i).getProp(j).getName() == VcUtil.VcPname.VCP_N)
                         {
-                            bool duplicate = checkExistingCard(filep.getCardp(i).getProp(j).getValue());
+                            duplicate = checkExistingCard(filep.getCardp(i).getProp(j).getValue());
 
                             if (!duplicate)
                             {
@@ -328,9 +331,20 @@ namespace VcardManager
                             command.Parameters.AddWithValue("@parval", filep.getCardp(i).getProp(j).getParVal());
                             command.Parameters.AddWithValue("@value", filep.getCardp(i).getProp(j).getValue());
                             command.ExecuteNonQuery();
+
+                            if (filep.getCardp(i).getProp(j).getName() == VcUtil.VcPname.VCP_FN)
+                            {
+                                nameList.Append(filep.getCardp(i).getProp(j).getValue()).Append(",\n");
+                            }
                         }
                     }
                 }
+
+                if (!duplicate)
+                {
+                    MessageBox.Show(nameList.ToString() + "has been successfully added to the database", "", MessageBoxButton.OK, MessageBoxImage.Information);
+                }
+
             }
             else
             {
@@ -345,6 +359,10 @@ namespace VcardManager
             int nameID = 0;
             CardDetails card;
             StringBuilder name = new StringBuilder();
+            StringBuilder nameList = new StringBuilder();
+            bool duplicate = false;
+
+            //LogBox.Text = dgUsers.SelectedItems.Count.ToString();
 
             if (cardList.Count != 0)
             {
@@ -366,7 +384,7 @@ namespace VcardManager
                         {
                             if (filep.getCardp(index).getProp(j).getName() == VcUtil.VcPname.VCP_N)
                             {
-                                bool duplicate = checkExistingCard(filep.getCardp(index).getProp(j).getValue());
+                                duplicate = checkExistingCard(filep.getCardp(index).getProp(j).getValue());
 
                                 if (!duplicate)
                                 {
@@ -400,8 +418,19 @@ namespace VcardManager
                                 command.Parameters.AddWithValue("@parval", filep.getCardp(index).getProp(j).getParVal());
                                 command.Parameters.AddWithValue("@value", filep.getCardp(index).getProp(j).getValue());
                                 command.ExecuteNonQuery();
+
+                                if (filep.getCardp(index).getProp(j).getName() == VcUtil.VcPname.VCP_FN)
+                                {
+                                    nameList.Append(filep.getCardp(index).getProp(j).getValue()).Append(",\n");
+                                }
+
                             }
                         }
+                    }
+
+                    if (!duplicate)
+                    {
+                        MessageBox.Show(nameList.ToString() + "has been successfully added to the database", "", MessageBoxButton.OK, MessageBoxImage.Information);
                     }
                 }
                 else
@@ -412,6 +441,25 @@ namespace VcardManager
             else
             {
                 MessageBox.Show("No cards are loaded to store", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
+        }
+
+        private void Export_Click(object sender, RoutedEventArgs e)
+        {
+            SaveFileDialog saveFileDialog = new SaveFileDialog();
+            saveFileDialog.Filter = "VCF files (*.vcf)|*.vcf|All files (*.*)|*.*";
+
+            if (cardList.Count == 0)
+            {
+                MessageBox.Show("Database is not open.\nPlease open database before exporting.", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
+            else
+            {
+                if (saveFileDialog.ShowDialog() == true)
+                {
+                    string fileName = saveFileDialog.FileName;
+                    util.writeVcFile(filep, fileName);
+                }
             }
         }
 
@@ -880,6 +928,6 @@ namespace VcardManager
             db.Close();
             base.OnClosed(e);
         }
- 
+
     }
 }

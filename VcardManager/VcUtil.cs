@@ -37,12 +37,12 @@ namespace VcardManager
             VCP_NICKNAME,
             VCP_NOTE,
             VCP_ORG,
+            VCP_OTHER,   // used for any other property name
             VCP_PHOTO,
             VCP_TEL,
             VCP_TITLE,
             VCP_UID,    // unique ID
             VCP_URL,
-            VCP_OTHER,   // used for any other property name
             VCP_BAD
         };
 
@@ -690,7 +690,7 @@ namespace VcardManager
             return status;
         }
 
-        public VcStatus writeVcFile(VcFile filep)
+        public VcStatus writeVcFile(VcFile filep, string filename)
         {
             VcStatus status = new VcStatus();
             StringBuilder finalCard = new StringBuilder();
@@ -701,7 +701,7 @@ namespace VcardManager
 
             status.setCode(VcError.OK);
 
-            using (StreamWriter wr = new StreamWriter("TextFile2.txt"))
+            using (StreamWriter wr = File.CreateText(filename))
             {
                 for (int i = 0; i < filep.getNcards(); i++)
                 {
@@ -721,7 +721,7 @@ namespace VcardManager
                             length = cardBuilder.Length;
 
 
-                            if (filep.getCardp(i).getProp(j).getPartype() != null)
+                            if (filep.getCardp(i).getProp(j).getPartype().Length > 0)
                             {
                                 cardBuilder.Append(";TYPE=");
                                 length += 6;
@@ -739,7 +739,7 @@ namespace VcardManager
                                 }
                             }
 
-                            if (filep.getCardp(i).getProp(j).getParVal() != null)
+                            if (filep.getCardp(i).getProp(j).getParVal().Length > 0)
                             {
                                 cardBuilder.Append(";VALUE=");
                                 length += 7;
@@ -757,7 +757,7 @@ namespace VcardManager
                                 }
                             }
 
-                            if (filep.getCardp(i).getProp(j).getValue() != null)
+                            if (filep.getCardp(i).getProp(j).getValue().Length > 0)
                             {
                                 cardBuilder.Append(":");
                                 length += 1;
@@ -780,7 +780,7 @@ namespace VcardManager
                             cardBuilder.Clear();
                         }
 
-                        finalCard.Append("END:VCARD\r\n\n");
+                        finalCard.Append("END:VCARD\r\n").Append("\n");
 
                     }
                     //finalString = finalCard.ToString();
@@ -882,6 +882,9 @@ namespace VcardManager
 
             switch (prop)
             {
+                case VcPname.VCP_N:
+                    name = "N";
+                    break;
                 case VcUtil.VcPname.VCP_FN:
                     name = "FN";
                     break;

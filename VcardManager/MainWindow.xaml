@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:VcardManager"
         mc:Ignorable="d"
-        Title="Vcard Editor" Height="600" Width="1000"
+        Title="Vcard Manager" Height="600" Width="1000"
         ResizeMode="NoResize">
     <Window.Resources>
         <BitmapImage x:Key="DefaultImage" UriSource="/Images/BlankProfile.png"/>
@@ -25,6 +25,8 @@
                 <MenuItem Header="Store All" Click="StoreAll_Click"/>
                 <MenuItem Header="Store Seleceted" Click="StoreSelected_Click"/>
                 <Separator/>
+                <MenuItem Header="Export Database" Click="Export_Click"/>
+                <Separator/>
                 <MenuItem Header="Search" Click="Search_Click"/>
             </MenuItem>
             <MenuItem Header="Help">
@@ -35,12 +37,54 @@
 
             <DataGrid Name="dgUsers" AutoGenerateColumns="False" ItemsSource="{Binding}" Height="332" IsReadOnly="True" CanUserResizeColumns="False" SelectedItem="{Binding Path=SelectedCard, Mode=TwoWay}">
                 <DataGrid.Columns>
-                    <DataGridTextColumn Header="Card #" Binding="{Binding cardNumber}" Width="100"/>
-                    <DataGridTextColumn Header="Name" Binding="{Binding Name}" Width="200"/>
-                    <DataGridTextColumn Header="Region" Binding="{Binding Region, TargetNullValue=Not Available}" Width="240"/>
-                    <DataGridTextColumn Header="Country" Binding="{Binding Country, TargetNullValue=Not Available}" Width="240"/>
-                    <DataGridTextColumn Header="# Address" Binding="{Binding numAddress}" Width="100"/>
-                    <DataGridTextColumn Header="# Telephone" Binding="{Binding numTelephone}" Width="95"/>
+                    <DataGridTextColumn Header="Card #" Binding="{Binding cardNumber}" Width="100">
+                        <DataGridTextColumn.ElementStyle>
+                            <Style>
+                                <Setter Property="FrameworkElement.HorizontalAlignment" Value="Center"/>
+                            </Style>
+                        </DataGridTextColumn.ElementStyle>
+                    </DataGridTextColumn>
+
+                    <DataGridTextColumn Header="Name" Binding="{Binding Name}" Width="200">
+                        <DataGridTextColumn.ElementStyle>
+                            <Style>
+                                <Setter Property="FrameworkElement.HorizontalAlignment" Value="Center"/>
+                            </Style>
+                        </DataGridTextColumn.ElementStyle>
+                    </DataGridTextColumn>
+
+                    <DataGridTextColumn Header="Region" Binding="{Binding Region, TargetNullValue=Not Available}" Width="240">
+                        <DataGridTextColumn.ElementStyle>
+                            <Style>
+                                <Setter Property="FrameworkElement.HorizontalAlignment" Value="Center"/>
+                            </Style>
+                        </DataGridTextColumn.ElementStyle>
+                    </DataGridTextColumn>
+
+                    <DataGridTextColumn Header="Country" Binding="{Binding Country, TargetNullValue=Not Available}" Width="240">
+                        <DataGridTextColumn.ElementStyle>
+                            <Style>
+                                <Setter Property="FrameworkElement.HorizontalAlignment" Value="Center"/>
+                            </Style>
+                        </DataGridTextColumn.ElementStyle>
+                    </DataGridTextColumn>
+
+                    <DataGridTextColumn Header="# Address" Binding="{Binding numAddress}" Width="100">
+                        <DataGridTextColumn.ElementStyle>
+                            <Style>
+                                <Setter Property="FrameworkElement.HorizontalAlignment" Value="Center"/>
+                            </Style>
+                        </DataGridTextColumn.ElementStyle>
+                    </DataGridTextColumn>
+
+                    <DataGridTextColumn Header="# Telephone" Binding="{Binding numTelephone}" Width="95">
+                        <DataGridTextColumn.ElementStyle>
+                            <Style>
+                                <Setter Property="FrameworkElement.HorizontalAlignment" Value="Center"/>
+                            </Style>
+                        </DataGridTextColumn.ElementStyle>
+                    </DataGridTextColumn>
+                    
                 </DataGrid.Columns>
 
                 <DataGrid.RowDetailsTemplate>

@@ -8,12 +8,26 @@
         ResizeMode="NoResize"
         Title="{Binding myTitle}" Height="500" Width="800">
     <Grid Height="472" VerticalAlignment="Top">
-        <ListBox x:Name="listBox" Margin="10,74,454,79"/>
-        <ListBox x:Name="listBox1" Height="319" Margin="454,74,10,0" VerticalAlignment="Top"/>
-        <Button x:Name="button" Content="Replace" Margin="366,114,366,0" VerticalAlignment="Top"/>
-        <Button x:Name="button1" Content="Merge" Margin="366,208,366,0" VerticalAlignment="Top" />
-        <Button x:Name="button2" Content="Cancel" Margin="366,300,366,0" VerticalAlignment="Top" IsCancel="True"/>
-        <Label x:Name="label" Content="Card in Database" Margin="508,24,40,0" VerticalAlignment="Top" FontWeight="Bold" FontSize="26.667"/>
-        <Label x:Name="label1" Content="Card to Store" Margin="76,24,522,0" VerticalAlignment="Top" FontSize="26.667" FontWeight="Bold"/>
+        <ListBox x:Name="listBox" Margin="11,80,453,72" ScrollViewer.HorizontalScrollBarVisibility="Disabled">
+            <ListBox.ItemTemplate>
+                <DataTemplate>
+                    <TextBlock Text="{Binding Path=.}" TextWrapping="WrapWithOverflow"></TextBlock>
+                </DataTemplate>
+            </ListBox.ItemTemplate>
+        </ListBox>
+
+        <ListBox x:Name="listBox1" Margin="454,80,10,72" ScrollViewer.HorizontalScrollBarVisibility="Disabled">
+            <ListBox.ItemTemplate>
+                <DataTemplate>
+                    <TextBlock Text="{Binding Path=.}" TextWrapping="WrapWithOverflow"></TextBlock>
+                </DataTemplate>
+            </ListBox.ItemTemplate>
+        </ListBox>
+        <Button x:Name="button" Content="Replace" Margin="366,149,366,0" VerticalAlignment="Top" Click="Replace_Click"/>
+        <Button x:Name="button1" Content="Merge" Margin="366,229,366,0" VerticalAlignment="Top" Click="Merge_Click" />
+        <Button x:Name="button2" Content="Cancel" Margin="366,309,366,0" VerticalAlignment="Top" IsCancel="True"/>
+        <Label x:Name="label" Content="Card in Database" Margin="497,24,51,0" VerticalAlignment="Top" FontWeight="Bold" FontSize="26.667"/>
+        <Label x:Name="label1" Content="Card to Store" Margin="62,24,536,0" VerticalAlignment="Top" FontSize="26.667" FontWeight="Bold"/>
+
     </Grid>
 </Window>
