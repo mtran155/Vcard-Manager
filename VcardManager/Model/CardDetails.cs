@@ -12,7 +12,7 @@ namespace VcardManager.Model
 
         public string Name { get; set; }
 
-        public string[] fullName { get; set; }
+        public string fullName { get; set; }
 
         public string Address { get; set; }
 
@@ -51,5 +51,7 @@ namespace VcardManager.Model
         public string Note { get; set; }
 
         public string Image { get; set; }
+
+        public bool Stored { get; set; }
     }
 }

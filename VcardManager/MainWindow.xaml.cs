@@ -33,6 +33,7 @@ namespace VcardManager
         List<CardDetails> cardList = new List<CardDetails>();
         SQLiteConnection db = new SQLiteConnection("Data Source=../../Database/VcardDatabase.db;Version=3;");
         SQLiteCommand command;
+        bool databaseOpen = false;
 
         public MainWindow()
         {
@@ -56,19 +57,6 @@ namespace VcardManager
 
             command = new SQLiteCommand(sql, db);
             command.ExecuteNonQuery();
-
-            //sql = @"INSERT INTO NAME VALUES (null, 'DOUG');";
-            //command = new SQLiteCommand(sql, db);
-            //command.ExecuteNonQuery();
-
-            //sql = @"INSERT INTO NAME (name) VALUES ('JOE');";
-            //command = new SQLiteCommand(sql, db);
-            //command.ExecuteNonQuery();
-
-            //sql = @"SELECT * FROM NAME";
-            //command = new SQLiteCommand(sql, db);
-            //SQLiteDataReader reader = command.ExecuteReader();
-            //while (reader.Read()) { LogBox.Text += "Name: " + reader["name"]; }
         }
 
         /*File Menu Buttons*/
@@ -90,6 +78,7 @@ namespace VcardManager
 
                 if (status.getCode() == VcUtil.VcError.OK)
                 {
+                    databaseOpen = false;
                     RefreshCardDisplay();
                     //LogBox.Text = filep.ToString();
                 }
@@ -121,6 +110,7 @@ namespace VcardManager
 
                     if (status.getCode() == VcUtil.VcError.OK)
                     {
+                        databaseOpen = false;
                         RefreshCardDisplay();
                         //LogBox.Text = filep.ToString();
                     }
@@ -208,6 +198,8 @@ namespace VcardManager
                     filep.setCardp(card);
                     filep.setNcards(1);
                 }
+
+                databaseOpen = true;
                 RefreshCardDisplay();
             }
         }
@@ -272,6 +264,7 @@ namespace VcardManager
                     //LogBox.Text = cardList.Count.ToString();
                     //cardList.Clear();
                     //LogBox.Text += " after: " + cardList.Count.ToString();
+                    databaseOpen = true;
                     RefreshCardDisplay();
                 }
             }
@@ -288,6 +281,7 @@ namespace VcardManager
             int nameID = 0;
             bool duplicate = false;
             StringBuilder nameList = new StringBuilder();
+            int counter = 0;
 
             if (cardList.Count != 0)
             {
@@ -331,6 +325,7 @@ namespace VcardManager
                             command.Parameters.AddWithValue("@parval", filep.getCardp(i).getProp(j).getParVal());
                             command.Parameters.AddWithValue("@value", filep.getCardp(i).getProp(j).getValue());
                             command.ExecuteNonQuery();
+                            counter++;
 
                             if (filep.getCardp(i).getProp(j).getName() == VcUtil.VcPname.VCP_FN)
                             {
@@ -340,7 +335,7 @@ namespace VcardManager
                     }
                 }
 
-                if (!duplicate)
+                if (counter > 0)
                 {
                     MessageBox.Show(nameList.ToString() + "has been successfully added to the database", "", MessageBoxButton.OK, MessageBoxImage.Information);
                 }
@@ -358,9 +353,10 @@ namespace VcardManager
             int value = 0;
             int nameID = 0;
             CardDetails card;
-            StringBuilder name = new StringBuilder();
+            //StringBuilder name = new StringBuilder();
             StringBuilder nameList = new StringBuilder();
             bool duplicate = false;
+            int index = 0;
 
             //LogBox.Text = dgUsers.SelectedItems.Count.ToString();
 
@@ -372,13 +368,7 @@ namespace VcardManager
                     {
                         card = new CardDetails();
                         card = (CardDetails)dgUsers.SelectedItems[i];
-                        name.Clear();
-
-                        name.Append(card.fullName[0]).Append(";").Append(card.fullName[1]);
-                        //LogBox.Text += name.ToString() + "\n";
-                        int index = findCard(name.ToString(), VcUtil.VcPname.VCP_N);
-
-                        //LogBox.Text += index.ToString() + "\n";
+                        index = card.cardNumber - 1;
 
                         for (int j = 0; j < filep.getCardp(index).getNprops(); j++)
                         {
@@ -463,6 +453,42 @@ namespace VcardManager
             }
         }
 
+        private void ExportSelected_Click(object sender, RoutedEventArgs e)
+        {
+            CardDetails card;
+            VcUtil.VcFile list = new VcUtil.VcFile();
+
+            SaveFileDialog saveFileDialog = new SaveFileDialog();
+            saveFileDialog.Filter = "VCF files (*.vcf)|*.vcf|All files (*.*)|*.*";
+
+            if (cardList.Count == 0)
+            {
+                MessageBox.Show("Database is not open.\nPlease open database before exporting.", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
+            else
+            {
+                if (dgUsers.SelectedItem != null)
+                {
+                    for (int i = 0; i < dgUsers.SelectedItems.Count; i++)
+                    {
+                        card = new CardDetails();
+                        card = (CardDetails)dgUsers.SelectedItems[i];
+
+                        list.setCardp(filep.getCardp(card.cardNumber - 1));
+                        list.setNcards(1);
+
+                        //LogBox.Text += filep.getCardp(card.cardNumber - 1).getProp(1).getParVal().Length;
+                    }
+
+                    if (saveFileDialog.ShowDialog() == true)
+                    {
+                        string fileName = saveFileDialog.FileName;
+                        util.writeVcFile(list, fileName);
+                    }
+                }
+            }
+        }
+
         private void Search_Click(object sender, RoutedEventArgs e)
         {
             // Select * FROM Property where value like  '%woo%'
@@ -499,28 +525,6 @@ namespace VcardManager
             //LogBox.Text += "" + pNameConvertor(name) + " what count equals = " + count + "\n";
 
             return (count + 1);
-        }
-
-        private int findCard(string value, VcUtil.VcPname name)
-        {
-            int index = -1;
-
-            for (int i = 0; i < filep.getNcards(); i++)
-            {
-                for (int j = 0; j < filep.getCardp(i).getNprops(); j++)
-                {
-                    if (filep.getCardp(i).getProp(j).getName() == name)
-                    {
-                        if (filep.getCardp(i).getProp(j).getValue().Contains(value))
-                        {
-                            index = i;
-                            break;
-                        }
-                    }
-                }
-            }
-
-            return index;
         }
 
 
@@ -613,18 +617,21 @@ namespace VcardManager
             /*************************************/
 
             /*Name and Email Tab*/
-            for (int i = 0; i < card.fullName.Length; i++)
+            string[] token = card.fullName.Split(';');
+
+
+            for (int i = 0; i < token.Length; i++)
             {
                 switch (i)
                 {
                     case 0:
-                        window.LastName.Text = card.fullName[i];
+                        window.LastName.Text = token[i];
                         break;
                     case 1:
-                        window.FirstName.Text = card.fullName[i];
+                        window.FirstName.Text = token[i];
                         break;
                     case 2:
-                        window.MiddleName.Text = card.fullName[i];
+                        window.MiddleName.Text = token[i];
                         break;
                     default:
                         break;
@@ -736,23 +743,29 @@ namespace VcardManager
 
         private void RefreshCardDisplay()
         {
+            bool loaded = false;
+
             if (cardList.Count > 0)
             {
-                cardList.Clear();
+                //cardList.Clear();
                 dgUsers.ItemsSource = null;
+                loaded = true;
             }
 
             for (int i = 0; i < filep.getNcards(); i++)
             {
-                CardDetails card = new CardDetails();
-                card.cardNumber = i + 1;
-
-                for (int j = 0; j < filep.getCardp(i).getNprops(); j++)
+                if (loaded)
                 {
-                    PropertyValue(filep.getCardp(i).getProp(j).getName(), filep.getCardp(i).getProp(j), card);
+                    if (i + 1 > cardList.Count)
+                    {
+                        buildCard(i);
+                    }
+                }
+                else
+                {
+                    buildCard(i);
                 }
                 
-                cardList.Add(card);
             }
 
             dgUsers.ItemsSource = cardList;
@@ -765,8 +778,8 @@ namespace VcardManager
             switch (name)
             {
                 case VcUtil.VcPname.VCP_N:                    
-                    tokens = prop.getValue().Split(';');
-                    card.fullName = tokens;
+                    //tokens = prop.getValue().Split(';');
+                    card.fullName = prop.getValue();
                     break;
 
                 case VcUtil.VcPname.VCP_FN:
@@ -920,6 +933,28 @@ namespace VcardManager
             return address.ToString();
         }
 
+        private void buildCard(int index)
+        {
+            CardDetails card = new CardDetails();
+            card.cardNumber = index + 1;
+
+            for (int j = 0; j < filep.getCardp(index).getNprops(); j++)
+            {
+                PropertyValue(filep.getCardp(index).getProp(j).getName(), filep.getCardp(index).getProp(j), card);
+            }
+
+            if (databaseOpen)
+            {
+                card.Stored = true;
+            }
+            else
+            {
+                card.Stored = false;
+            }
+
+            cardList.Add(card);
+        }
+
 
         /*Window Functions*/
 
@@ -929,5 +964,59 @@ namespace VcardManager
             base.OnClosed(e);
         }
 
+        private void Delete_Click(object sender, RoutedEventArgs e)
+        {
+            CardDetails card = (CardDetails)dgUsers.SelectedItem;
+            string query;
+            int nameID;
+
+
+            if (card.Stored)
+            {
+                MessageBoxResult result = MessageBox.Show("Are you sure you want to delete " + card.Name + " from database", "", MessageBoxButton.YesNo, MessageBoxImage.Question);
+
+                if (result == MessageBoxResult.Yes)
+                {
+                    query = @"SELECT name_id FROM NAME WHERE ([name] = @name);";
+                    command = new SQLiteCommand(query, db);
+                    command.Parameters.AddWithValue("@name", card.fullName);
+                    SQLiteDataReader reader = command.ExecuteReader();
+
+                    nameID = Convert.ToInt32(reader["name_id"]);
+
+                    query = @"DELETE FROM PROPERTY WHERE ([name_id] = @nameID);";
+                    command = new SQLiteCommand(query, db);
+                    command.Parameters.AddWithValue("@nameID", nameID);
+                    command.ExecuteNonQuery();
+
+                    query = @"DELETE FROM NAME WHERE ([name_id] = @nameID);";
+                    command = new SQLiteCommand(query, db);
+                    command.Parameters.AddWithValue("@nameID", nameID);
+                    command.ExecuteNonQuery();
+
+                    filep.removeCard(filep.getCardp(card.cardNumber - 1));
+                    cardList.RemoveAt(card.cardNumber - 1);
+                    MessageBox.Show(card.Name + " has been removed from the database", "", MessageBoxButton.OK, MessageBoxImage.Information);
+                    RefreshCardDisplay();
+                }
+            }
+            else
+            {
+                MessageBoxResult result = MessageBox.Show("Are you sure you want to remove " + card.Name + " from the list", "", MessageBoxButton.YesNo, MessageBoxImage.Question);
+
+                if (result == MessageBoxResult.Yes)
+                {
+                    filep.removeCard(filep.getCardp(card.cardNumber - 1));
+                    cardList.RemoveAt(card.cardNumber - 1);
+                    MessageBox.Show(card.Name + " has been removed from list", "", MessageBoxButton.OK, MessageBoxImage.Information);
+                    RefreshCardDisplay();
+                }
+            }            
+        }
+
+        private void Edit_Click(object sender, RoutedEventArgs e)
+        {
+
+        }
     }
 }
